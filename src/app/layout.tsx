@@ -1,0 +1,43 @@
+import type { Metadata } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "Cunningham Pure Water LLC | Louisiana's Only Authorized Wellsys Dealer",
+  description: "Premium commercial water coolers and ice machines with 5-6 stage reverse osmosis filtration. Louisiana's exclusive authorized Wellsys dealer. Rent water coolers and ice machines for your business.",
+  keywords: "water cooler rental, ice machine rental, Wellsys dealer Louisiana, commercial water cooler, reverse osmosis, office water cooler, pure water, water filtration",
+  authors: [{ name: "Cunningham Pure Water LLC" }],
+  openGraph: {
+    title: "Cunningham Pure Water LLC | Premium Water Solutions",
+    description: "Louisiana's only authorized Wellsys dealer. Commercial water coolers and ice machines with advanced filtration for businesses.",
+    url: "https://www.officepurewater.com",
+    siteName: "Cunningham Pure Water LLC",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cunningham Pure Water LLC",
+    description: "Premium commercial water coolers and ice machines for Louisiana businesses.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  icons: {
+    icon: "/favicon.svg",
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" className="scroll-smooth">
+      <body className="antialiased">
+        {children}
+      </body>
+    </html>
+  );
+}

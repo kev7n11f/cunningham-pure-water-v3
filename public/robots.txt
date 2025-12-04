@@ -1,0 +1,6 @@
+# Cunningham Pure Water - Robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://cunninghampurewater.com/sitemap.xml
