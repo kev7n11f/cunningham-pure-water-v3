@@ -5,131 +5,422 @@ import Image from 'next/image';
 import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
 import { Droplets, Snowflake, Shield, Leaf, Phone, Mail, MapPin, ChevronDown, Check, Award, Zap } from 'lucide-react';
 
-// Generate stable random values for particles
-const generateParticleData = (count: number) => {
-  const particles = [];
+// Generate varied splash droplets - different sizes, speeds, and trajectories
+const generateSplashDroplets = (count: number) => {
+  const droplets = [];
   for (let i = 0; i < count; i++) {
-    const angle = (i / count) * Math.PI * 2;
-    const randomOffset = (i * 1.618) % 1; // Golden ratio for pseudo-random distribution
-    particles.push({
+    const angle = (i / count) * Math.PI * 2 + (((i * 7) % 10) / 10) * 0.3;
+    const randomFactor = ((i * 1.618) % 1);
+    const randomFactor2 = ((i * 2.718) % 1);
+    
+    droplets.push({
       angle,
-      distance: 200 + randomOffset * 600,
-      size: 10 + (randomOffset * 30),
-      speed: 0.8 + randomOffset * 0.4,
-      xOffset: ((i * 7) % 100) - 50,
+      // Vary distance significantly for depth effect
+      distance: 150 + randomFactor * 700 + randomFactor2 * 300,
+      // Mix of small fast droplets and larger slower ones
+      size: randomFactor < 0.3 ? 6 + randomFactor * 15 : 15 + randomFactor * 40,
+      speed: randomFactor < 0.3 ? 1.2 + randomFactor * 0.5 : 0.6 + randomFactor * 0.6,
+      // Elongation for motion blur effect
+      elongation: 1.2 + randomFactor * 1.5,
+      // Rotation for natural look
+      rotation: randomFactor * 360,
+      // Delay for staggered splash
+      delay: randomFactor2 * 0.15,
+      // Gravity effect - how much it curves down
+      gravity: 0.3 + randomFactor * 0.7,
+      // Z-depth for parallax
+      zDepth: randomFactor,
     });
   }
-  return particles;
+  return droplets;
 };
 
-const PARTICLE_DATA = generateParticleData(50);
+// Generate water streams - longer streaks of water
+const generateWaterStreams = (count: number) => {
+  const streams = [];
+  for (let i = 0; i < count; i++) {
+    const angle = (i / count) * Math.PI * 2;
+    const randomFactor = ((i * 1.414) % 1);
+    streams.push({
+      angle,
+      length: 100 + randomFactor * 200,
+      width: 3 + randomFactor * 8,
+      speed: 0.8 + randomFactor * 0.4,
+      opacity: 0.4 + randomFactor * 0.4,
+    });
+  }
+  return streams;
+};
 
-// Water Splash Particle - Explodes across screen on scroll
-const SplashParticle = ({ 
+// Generate screen splatter points
+const generateSplatters = (count: number) => {
+  const splatters = [];
+  for (let i = 0; i < count; i++) {
+    const randomX = ((i * 3.14159) % 1);
+    const randomY = ((i * 2.71828) % 1);
+    splatters.push({
+      x: (randomX - 0.5) * 100, // percentage from center
+      y: (randomY - 0.5) * 100,
+      size: 20 + ((i * 1.618) % 1) * 80,
+      delay: ((i * 1.414) % 1) * 0.3,
+      dripLength: 30 + ((i * 2.236) % 1) * 100,
+    });
+  }
+  return splatters;
+};
+
+const SPLASH_DROPLETS = generateSplashDroplets(80);
+const WATER_STREAMS = generateWaterStreams(24);
+const SCREEN_SPLATTERS = generateSplatters(15);
+
+// Realistic water droplet component
+const WaterDroplet = ({ 
   data,
   scrollProgress 
 }: { 
-  data: typeof PARTICLE_DATA[0];
+  data: typeof SPLASH_DROPLETS[0];
   scrollProgress: number;
 }) => {
-  const progress = Math.min(1, scrollProgress * data.speed * 1.5);
+  const adjustedProgress = Math.max(0, scrollProgress - data.delay);
+  const easedProgress = Math.pow(adjustedProgress, 0.6);
+  const progress = Math.min(1, easedProgress * data.speed * 2);
   
-  // Particles start from center and explode outward
-  const x = Math.cos(data.angle) * data.distance * progress + data.xOffset * progress;
-  const y = Math.sin(data.angle) * data.distance * progress - (progress * 150);
+  // Calculate position with gravity curve
+  const baseX = Math.cos(data.angle) * data.distance * progress;
+  const baseY = Math.sin(data.angle) * data.distance * progress;
+  const gravityOffset = progress * progress * data.gravity * 200;
   
-  // Fade in quickly, then fade out as they reach the edges
-  const opacity = progress < 0.1 ? progress * 10 : 
-                  progress > 0.7 ? (1 - progress) * 3.33 : 1;
+  const x = baseX;
+  const y = baseY + gravityOffset;
   
-  const scale = 0.3 + progress * 1.2;
+  // Opacity with quick fade in and gradual fade out
+  const opacity = adjustedProgress < 0.03 ? adjustedProgress * 33 : 
+                  progress > 0.6 ? (1 - progress) * 2.5 : 1;
+  
+  // Scale increases slightly as droplet "approaches" viewer
+  const scale = (0.3 + progress * 0.8) * (1 + data.zDepth * 0.5);
+  
+  // Elongate in direction of motion for speed effect
+  const motionAngle = Math.atan2(y - baseY + 0.1, x) * (180 / Math.PI);
   
   return (
     <div
-      className="absolute rounded-full pointer-events-none"
+      className="absolute pointer-events-none"
       style={{
         width: data.size,
-        height: data.size * 1.4,
+        height: data.size * data.elongation,
         left: '50%',
         top: '50%',
-        transform: `translate(${x}px, ${y}px) scale(${scale})`,
-        opacity: opacity * 0.9,
-        background: `radial-gradient(ellipse at 30% 30%, rgba(168, 212, 240, 0.95), rgba(74, 158, 208, 0.7), rgba(26, 110, 160, 0.4))`,
-        boxShadow: `0 0 ${20 + progress * 20}px rgba(74, 158, 208, ${0.5 + progress * 0.3}), inset -2px -2px 10px rgba(255,255,255,0.4)`,
-        borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
+        transform: `translate(${x}px, ${y}px) scale(${scale}) rotate(${data.rotation + motionAngle}deg)`,
+        opacity: opacity * 0.95,
+        background: `
+          radial-gradient(ellipse at 30% 20%, 
+            rgba(255, 255, 255, 0.95) 0%,
+            rgba(200, 230, 250, 0.9) 20%,
+            rgba(120, 190, 230, 0.8) 40%,
+            rgba(60, 150, 200, 0.6) 70%,
+            rgba(30, 100, 160, 0.3) 100%
+          )
+        `,
+        boxShadow: `
+          0 0 ${10 + data.size * 0.3}px rgba(100, 180, 230, 0.5),
+          inset -${data.size * 0.1}px -${data.size * 0.1}px ${data.size * 0.3}px rgba(255,255,255,0.6),
+          inset ${data.size * 0.05}px ${data.size * 0.05}px ${data.size * 0.2}px rgba(30, 100, 160, 0.3)
+        `,
+        borderRadius: '45% 45% 50% 50% / 40% 40% 60% 60%',
+        filter: `blur(${data.zDepth * 1}px)`,
       }}
     />
   );
 };
 
-// Main Water Splash Effect Component
-const WaterSplash = ({ scrollProgress }: { scrollProgress: number }) => {
-  // Central water droplet that "bursts"
-  const centralScale = scrollProgress < 0.3 
-    ? 1 + scrollProgress * 2 
-    : Math.max(0, 1.6 - (scrollProgress - 0.3) * 4);
+// Water stream component - elongated water trails
+const WaterStream = ({
+  data,
+  scrollProgress
+}: {
+  data: typeof WATER_STREAMS[0];
+  scrollProgress: number;
+}) => {
+  const progress = Math.min(1, scrollProgress * data.speed * 2.5);
   
-  const centralOpacity = scrollProgress < 0.4 
-    ? 0.9 
-    : Math.max(0, 0.9 - (scrollProgress - 0.4) * 2);
+  const startX = Math.cos(data.angle) * 50 * progress;
+  const startY = Math.sin(data.angle) * 50 * progress;
+  const endX = Math.cos(data.angle) * (50 + data.length) * progress;
+  const endY = Math.sin(data.angle) * (50 + data.length) * progress;
+  
+  const opacity = scrollProgress < 0.05 ? scrollProgress * 20 :
+                  progress > 0.5 ? (1 - progress) * 2 * data.opacity : data.opacity;
+  
+  return (
+    <div
+      className="absolute pointer-events-none"
+      style={{
+        left: '50%',
+        top: '50%',
+        width: data.length * progress,
+        height: data.width,
+        transform: `translate(${startX}px, ${startY}px) rotate(${data.angle * (180 / Math.PI)}deg)`,
+        transformOrigin: 'left center',
+        opacity,
+        background: `linear-gradient(90deg, 
+          rgba(150, 210, 250, 0.8) 0%,
+          rgba(100, 180, 230, 0.6) 50%,
+          rgba(60, 150, 200, 0.2) 100%
+        )`,
+        borderRadius: '50px',
+        filter: 'blur(1px)',
+      }}
+    />
+  );
+};
+
+// Screen splatter - water hitting the "screen"
+const ScreenSplatter = ({
+  data,
+  scrollProgress
+}: {
+  data: typeof SCREEN_SPLATTERS[0];
+  scrollProgress: number;
+}) => {
+  const adjustedProgress = Math.max(0, scrollProgress - 0.3 - data.delay);
+  const appearProgress = Math.min(1, adjustedProgress * 4);
+  
+  if (appearProgress <= 0) return null;
+  
+  const dripProgress = Math.max(0, adjustedProgress - 0.2) * 2;
+  
+  return (
+    <div
+      className="absolute pointer-events-none"
+      style={{
+        left: `calc(50% + ${data.x}%)`,
+        top: `calc(50% + ${data.y}%)`,
+        transform: 'translate(-50%, -50%)',
+      }}
+    >
+      {/* Main splatter blob */}
+      <div
+        style={{
+          width: data.size * appearProgress,
+          height: data.size * appearProgress * 0.8,
+          background: `
+            radial-gradient(ellipse at 40% 30%,
+              rgba(255, 255, 255, 0.4) 0%,
+              rgba(180, 220, 250, 0.3) 30%,
+              rgba(100, 180, 230, 0.2) 60%,
+              rgba(60, 150, 200, 0.1) 100%
+            )
+          `,
+          borderRadius: '60% 40% 50% 50% / 50% 50% 40% 60%',
+          boxShadow: `
+            inset 0 0 ${data.size * 0.2}px rgba(255,255,255,0.3),
+            0 0 ${data.size * 0.1}px rgba(100, 180, 230, 0.3)
+          `,
+          opacity: Math.max(0, 1 - adjustedProgress * 0.8),
+        }}
+      />
+      {/* Drip running down */}
+      <div
+        style={{
+          position: 'absolute',
+          top: data.size * 0.6,
+          left: '40%',
+          width: 4 + data.size * 0.05,
+          height: data.dripLength * dripProgress,
+          background: `linear-gradient(180deg,
+            rgba(150, 210, 250, 0.3) 0%,
+            rgba(100, 180, 230, 0.4) 50%,
+            rgba(60, 150, 200, 0.2) 100%
+          )`,
+          borderRadius: '50% 50% 50% 50% / 10% 10% 90% 90%',
+          opacity: Math.max(0, 1 - adjustedProgress * 0.5),
+        }}
+      />
+    </div>
+  );
+};
+
+// Main Water Splash Effect Component - Bucket of water effect
+const WaterSplash = ({ scrollProgress }: { scrollProgress: number }) => {
+  // Global fade out - everything disappears as splash completes
+  const globalFadeOut = scrollProgress > 0.7 ? Math.max(0, 1 - (scrollProgress - 0.7) * 3.33) : 1;
+  
+  // Don't render anything if fully faded out
+  if (globalFadeOut <= 0) return null;
+  
+  // Main water mass that bursts toward viewer
+  const centralScale = scrollProgress < 0.2 
+    ? 1 + scrollProgress * 8 
+    : Math.max(0, 2.6 - (scrollProgress - 0.2) * 4);
+  
+  const centralOpacity = (scrollProgress < 0.3 
+    ? Math.min(1, scrollProgress * 5) 
+    : Math.max(0, 1 - (scrollProgress - 0.3) * 2)) * globalFadeOut;
+
+  // Water sheet that spreads across screen
+  const sheetProgress = Math.max(0, scrollProgress - 0.15);
+  const sheetScale = sheetProgress * 15;
+  const sheetOpacity = (sheetProgress < 0.3 
+    ? sheetProgress * 2 
+    : Math.max(0, 0.6 - (sheetProgress - 0.3) * 1.5)) * globalFadeOut;
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Central water droplet */}
+    <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ opacity: globalFadeOut }}>
+      {/* Background water mist/atmosphere */}
       <div
-        className="absolute left-1/2 top-1/2"
+        className="absolute inset-0"
         style={{
-          width: 120,
-          height: 160,
-          transform: `translate(-50%, -50%) scale(${centralScale})`,
-          opacity: centralOpacity,
-          background: `radial-gradient(ellipse at 35% 25%, rgba(200, 230, 255, 0.95), rgba(74, 158, 208, 0.8) 40%, rgba(26, 110, 160, 0.6) 70%, rgba(10, 60, 120, 0.4))`,
-          boxShadow: `
-            0 0 60px rgba(74, 158, 208, 0.6),
-            0 0 120px rgba(74, 158, 208, 0.3),
-            inset -8px -8px 40px rgba(255,255,255,0.4),
-            inset 4px 4px 20px rgba(26, 110, 160, 0.3)
-          `,
-          borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
+          background: `radial-gradient(circle at 50% 50%, 
+            rgba(100, 180, 230, ${0.15 * scrollProgress}) 0%,
+            rgba(60, 150, 200, ${0.1 * scrollProgress}) 40%,
+            transparent 70%
+          )`,
+          opacity: scrollProgress > 0.1 ? 1 : scrollProgress * 10,
         }}
       />
       
-      {/* Expanding ripple rings */}
-      {[1, 2, 3, 4].map((ring) => {
-        const ringProgress = Math.max(0, scrollProgress - ring * 0.08);
-        const ringScale = ringProgress * (ring + 2);
-        const ringOpacity = Math.max(0, 0.6 - ringProgress * 1.5);
+      {/* Central water mass - the "bucket" of water */}
+      <div
+        className="absolute left-1/2 top-1/2"
+        style={{
+          width: 200,
+          height: 250,
+          transform: `translate(-50%, -50%) scale(${centralScale})`,
+          opacity: centralOpacity,
+          background: `
+            radial-gradient(ellipse at 40% 30%, 
+              rgba(255, 255, 255, 0.9) 0%,
+              rgba(200, 235, 255, 0.85) 15%,
+              rgba(140, 200, 240, 0.8) 30%,
+              rgba(80, 170, 220, 0.7) 50%,
+              rgba(40, 130, 190, 0.5) 70%,
+              rgba(20, 90, 150, 0.3) 100%
+            )
+          `,
+          boxShadow: `
+            0 0 80px rgba(100, 180, 230, 0.6),
+            0 0 160px rgba(60, 150, 200, 0.4),
+            inset -20px -20px 60px rgba(255,255,255,0.5),
+            inset 10px 10px 40px rgba(30, 100, 160, 0.3)
+          `,
+          borderRadius: '50% 50% 45% 45% / 55% 55% 45% 45%',
+          filter: 'blur(2px)',
+        }}
+      >
+        {/* Inner shine/highlight */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '15%',
+            left: '20%',
+            width: '40%',
+            height: '30%',
+            background: 'radial-gradient(ellipse, rgba(255,255,255,0.8) 0%, transparent 70%)',
+            borderRadius: '50%',
+            filter: 'blur(8px)',
+          }}
+        />
+      </div>
+      
+      {/* Expanding water sheet - spreads across screen */}
+      <div
+        className="absolute left-1/2 top-1/2"
+        style={{
+          width: 100,
+          height: 100,
+          transform: `translate(-50%, -50%) scale(${sheetScale})`,
+          background: `
+            radial-gradient(ellipse at center,
+              rgba(150, 210, 250, ${sheetOpacity * 0.4}) 0%,
+              rgba(100, 180, 230, ${sheetOpacity * 0.3}) 30%,
+              rgba(60, 150, 200, ${sheetOpacity * 0.15}) 60%,
+              transparent 80%
+            )
+          `,
+          borderRadius: '50%',
+          filter: 'blur(20px)',
+        }}
+      />
+      
+      {/* Impact ripples */}
+      {[1, 2, 3, 4, 5].map((ring) => {
+        const ringDelay = ring * 0.04;
+        const ringProgress = Math.max(0, scrollProgress - ringDelay);
+        const ringScale = ringProgress * (ring + 4);
+        const ringOpacity = Math.max(0, 0.5 - ringProgress * 0.8);
         
         return (
           <div
             key={ring}
-            className="absolute left-1/2 top-1/2 rounded-full border-2"
+            className="absolute left-1/2 top-1/2 rounded-full"
             style={{
-              width: 100,
-              height: 100,
+              width: 80,
+              height: 80,
               transform: `translate(-50%, -50%) scale(${ringScale})`,
-              borderColor: `rgba(74, 158, 208, ${ringOpacity})`,
+              border: `${3 - ring * 0.4}px solid rgba(150, 210, 250, ${ringOpacity})`,
+              boxShadow: `0 0 10px rgba(100, 180, 230, ${ringOpacity * 0.5})`,
               opacity: ringOpacity,
             }}
           />
         );
       })}
       
-      {/* Splash particles */}
-      {PARTICLE_DATA.map((data, i) => (
-        <SplashParticle key={i} data={data} scrollProgress={scrollProgress} />
+      {/* Water streams radiating outward */}
+      {WATER_STREAMS.map((data, i) => (
+        <WaterStream key={`stream-${i}`} data={data} scrollProgress={scrollProgress} />
       ))}
       
-      {/* Mist/spray effect */}
+      {/* Splash droplets */}
+      {SPLASH_DROPLETS.map((data, i) => (
+        <WaterDroplet key={`droplet-${i}`} data={data} scrollProgress={scrollProgress} />
+      ))}
+      
+      {/* Screen splatters - water hitting the "glass" */}
+      {SCREEN_SPLATTERS.map((data, i) => (
+        <ScreenSplatter key={`splatter-${i}`} data={data} scrollProgress={scrollProgress} />
+      ))}
+      
+      {/* Screen water drip effect at edges */}
+      {scrollProgress > 0.5 && (
+        <>
+          {[...Array(8)].map((_, i) => {
+            const dripProgress = Math.max(0, scrollProgress - 0.5 - i * 0.03);
+            const xPos = 10 + (i * 12);
+            return (
+              <div
+                key={`drip-${i}`}
+                className="absolute pointer-events-none"
+                style={{
+                  left: `${xPos}%`,
+                  top: 0,
+                  width: 6 + (i % 3) * 2,
+                  height: dripProgress * 300,
+                  background: `linear-gradient(180deg,
+                    rgba(150, 210, 250, 0.4) 0%,
+                    rgba(100, 180, 230, 0.5) 30%,
+                    rgba(80, 170, 220, 0.3) 70%,
+                    rgba(60, 150, 200, 0.1) 100%
+                  )`,
+                  borderRadius: '0 0 50% 50%',
+                  opacity: Math.max(0, 1 - dripProgress * 0.5),
+                }}
+              />
+            );
+          })}
+        </>
+      )}
+      
+      {/* Fine mist spray overlay */}
       <div
-        className="absolute left-1/2 top-1/2"
+        className="absolute inset-0"
         style={{
-          width: 600 + scrollProgress * 800,
-          height: 600 + scrollProgress * 800,
-          transform: 'translate(-50%, -50%)',
-          background: `radial-gradient(circle, rgba(74, 158, 208, ${0.15 * scrollProgress}) 0%, transparent 70%)`,
-          filter: 'blur(40px)',
-          opacity: scrollProgress > 0.2 ? Math.min(1, (scrollProgress - 0.2) * 2) : 0,
+          background: scrollProgress > 0.2 ? `
+            radial-gradient(circle at 30% 40%, rgba(200, 230, 250, ${(scrollProgress - 0.2) * 0.15}) 0%, transparent 30%),
+            radial-gradient(circle at 70% 30%, rgba(180, 220, 250, ${(scrollProgress - 0.2) * 0.12}) 0%, transparent 25%),
+            radial-gradient(circle at 50% 70%, rgba(160, 210, 245, ${(scrollProgress - 0.2) * 0.1}) 0%, transparent 35%)
+          ` : 'none',
+          opacity: Math.max(0, 1 - (scrollProgress - 0.6) * 2),
         }}
       />
     </div>
@@ -212,14 +503,14 @@ const ProductCard = ({ icon: Icon, title, description, features }: {
     transition={{ type: 'spring', stiffness: 300 }}
   >
     <div className="feature-icon mx-auto">
-      <Icon className="w-10 h-10 text-[#4A9ED0]" />
+      <Icon className="w-12 h-12 text-[#4A9ED0]" />
     </div>
-    <h3 className="text-2xl font-display font-bold text-white mb-4 text-center">{title}</h3>
-    <p className="text-gray-300 mb-6 text-center">{description}</p>
-    <ul className="space-y-3">
+    <h3 className="text-2xl lg:text-3xl font-display font-bold text-white mb-5 text-center">{title}</h3>
+    <p className="text-gray-300 mb-8 text-center text-lg">{description}</p>
+    <ul className="space-y-4">
       {features.map((feature, i) => (
-        <li key={i} className="flex items-center gap-3 text-gray-200">
-          <Check className="w-5 h-5 text-[#4A9ED0] flex-shrink-0" />
+        <li key={i} className="flex items-center gap-4 text-gray-200 text-lg">
+          <Check className="w-6 h-6 text-[#9B4D5D] flex-shrink-0" />
           <span>{feature}</span>
         </li>
       ))}
@@ -334,29 +625,84 @@ const ContactForm = () => {
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
+  const [splashComplete, setSplashComplete] = useState(false);
+  const [splashProgress, setSplashProgress] = useState(0);
+  const accumulatedScroll = useRef(0);
+  const splashDuration = 800; // Total scroll pixels needed to complete splash
+  
+  // Lock scrolling and capture scroll events during splash animation
+  useEffect(() => {
+    if (splashComplete) return;
+    
+    const handleWheel = (e: WheelEvent) => {
+      if (splashComplete) return;
+      
+      e.preventDefault();
+      
+      // Accumulate scroll delta
+      accumulatedScroll.current += Math.abs(e.deltaY);
+      
+      // Calculate progress (0 to 1)
+      const progress = Math.min(1, accumulatedScroll.current / splashDuration);
+      setSplashProgress(progress);
+      
+      // When splash is complete, unlock scrolling
+      if (progress >= 1) {
+        setSplashComplete(true);
+      }
+    };
+    
+    // Prevent default scrolling during splash
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    
+    // Also handle touch scrolling
+    let touchStartY = 0;
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+    
+    const handleTouchMove = (e: TouchEvent) => {
+      if (splashComplete) return;
+      
+      e.preventDefault();
+      
+      const touchY = e.touches[0].clientY;
+      const deltaY = touchStartY - touchY;
+      touchStartY = touchY;
+      
+      accumulatedScroll.current += Math.abs(deltaY);
+      const progress = Math.min(1, accumulatedScroll.current / splashDuration);
+      setSplashProgress(progress);
+      
+      if (progress >= 1) {
+        setSplashComplete(true);
+      }
+    };
+    
+    window.addEventListener('touchstart', handleTouchStart, { passive: false });
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+    
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, [splashComplete]);
+  
+  // After splash completes, use regular scroll for the rest of the page
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ['start start', 'end end'],
   });
-  
-  // The splash animation is driven by scroll progress from 0 to 1
-  // 0-0.5: Splash animation plays while page is pinned
-  // 0.5-1: Text fades out, preparing for next section
-  const splashProgress = useTransform(scrollYProgress, [0, 0.6], [0, 1]);
-  const [splashValue, setSplashValue] = useState(0);
-  
-  useEffect(() => {
-    const unsubscribe = splashProgress.on('change', (v) => setSplashValue(v));
-    return () => unsubscribe();
-  }, [splashProgress]);
 
-  // Text animations - fade out as splash progresses
-  const textOpacity = useTransform(scrollYProgress, [0, 0.15, 0.5, 0.7], [0, 1, 1, 0]);
-  const textY = useTransform(scrollYProgress, [0, 0.15, 0.5, 0.7], [50, 0, 0, -100]);
-  const textScale = useTransform(scrollYProgress, [0.5, 0.7], [1, 0.9]);
-  
-  // Scroll hint fades out once user starts scrolling
-  const scrollHintOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
+  // Text fades out as user scrolls after splash
+  const textOpacity = useTransform(
+    scrollYProgress, 
+    [0, 0.3, 0.5], 
+    [1, 1, 0]
+  );
+  const textY = useTransform(scrollYProgress, [0.3, 0.5], [0, -100]);
+  const textScale = useTransform(scrollYProgress, [0.3, 0.5], [1, 0.9]);
 
   return (
     <main className="min-h-screen overflow-x-hidden">
@@ -381,10 +727,7 @@ export default function Home() {
       </motion.nav>
 
       {/* Hero Section - Scroll-Locked Animation */}
-      {/* The section is 300vh tall to give scroll room while viewport stays pinned */}
-      <section ref={heroRef} className="relative h-[300vh]">
-        {/* Sticky container - stays fixed while user scrolls through the 300vh */}
-        <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
+      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
           {/* Background gradient */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#0A1628] via-[#0E2240] to-[#1A3A5F]" />
           
@@ -392,12 +735,16 @@ export default function Home() {
           <FloatingDroplets />
           
           {/* Water Splash Effect - Driven by scroll */}
-          <WaterSplash scrollProgress={splashValue} />
+          <WaterSplash scrollProgress={splashProgress} />
           
           {/* Hero Content */}
           <motion.div 
             className="relative z-10 text-center px-6 max-w-5xl mx-auto w-full"
-            style={{ opacity: textOpacity, y: textY, scale: textScale }}
+            style={{ 
+              opacity: splashComplete ? textOpacity : 1, 
+              y: splashComplete ? textY : 0, 
+              scale: splashComplete ? textScale : 1 
+            }}
           >
             <motion.div
               initial={{ opacity: 0 }}
@@ -421,7 +768,7 @@ export default function Home() {
             </motion.h1>
             
             <motion.p
-              className="text-xl md:text-2xl text-gray-300 mb-12 max-w-2xl mx-auto font-light"
+              className="text-xl md:text-2xl text-gray-300 mb-12 font-light text-center w-full"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.9 }}
@@ -446,39 +793,41 @@ export default function Home() {
           </motion.div>
           
           {/* Scroll Indicator - Fades out as user scrolls */}
-          <motion.div 
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-            style={{ opacity: scrollHintOpacity }}
-          >
-            <span className="text-gray-400 text-sm tracking-wider">Scroll to explore</span>
-            <motion.div
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
+          {splashProgress < 0.05 && !splashComplete && (
+            <motion.div 
+              className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
             >
-              <ChevronDown className="w-6 h-6 text-[#4A9ED0]" />
+              <span className="text-gray-400 text-sm tracking-wider">Scroll to explore</span>
+              <motion.div
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                <ChevronDown className="w-6 h-6 text-[#4A9ED0]" />
+              </motion.div>
             </motion.div>
-          </motion.div>
-        </div>
+          )}
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-32 relative">
+      <section id="about" className="py-32 md:py-40 relative border-t border-[#4A9ED0]/20">
         <div className="absolute inset-0 bg-gradient-to-b from-[#1A3A5F] via-[#0E2240] to-[#0A1628]" />
         
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <AnimatedSection className="text-center mb-20">
-            <span className="text-[#4A9ED0] font-medium tracking-[0.2em] uppercase text-sm">About Us</span>
-            <h2 className="text-4xl md:text-6xl font-display font-bold text-white mt-4 mb-8">
-              Water Done Right
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <AnimatedSection className="text-center mb-24">
+            <span className="block text-[#8B3D4D] font-medium tracking-[0.3em] uppercase text-base md:text-lg">About Us</span>
+            <h2 className="text-5xl md:text-7xl font-display font-bold text-white mt-6 mb-10">
+              Water Done <span className="gradient-text-burgundy">Right</span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-300 leading-relaxed text-center w-full max-w-4xl mx-auto">
               Cunningham Pure Water brings Wellsys&apos; industry-leading bottleless water coolers 
               and ice machines to Louisiana businesses. Advanced multi-stage filtration. 
               Sleek, modern design. Hassle-free rental programs.
             </p>
           </AnimatedSection>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-10 lg:gap-14">
             {[
               {
                 icon: Droplets,
@@ -497,12 +846,12 @@ export default function Home() {
               },
             ].map((item, i) => (
               <AnimatedSection key={i}>
-                <div className="text-center p-8 glass rounded-3xl">
+                <div className="text-center p-10 lg:p-12 glass rounded-3xl min-h-[320px] flex flex-col justify-center">
                   <div className="feature-icon mx-auto">
-                    <item.icon className="w-8 h-8 text-[#4A9ED0]" />
+                    <item.icon className="w-10 h-10 text-[#4A9ED0]" />
                   </div>
-                  <h3 className="text-2xl font-display font-bold text-white mb-4">{item.title}</h3>
-                  <p className="text-gray-400 leading-relaxed">{item.description}</p>
+                  <h3 className="text-2xl lg:text-3xl font-display font-bold text-white mb-5">{item.title}</h3>
+                  <p className="text-gray-400 leading-relaxed text-lg">{item.description}</p>
                 </div>
               </AnimatedSection>
             ))}
@@ -511,21 +860,21 @@ export default function Home() {
       </section>
 
       {/* Products Section */}
-      <section id="products" className="py-32 relative">
+      <section id="products" className="py-32 md:py-40 relative border-t border-[#4A9ED0]/20">
         <div className="absolute inset-0 bg-gradient-to-b from-[#0A1628] via-[#0E2240] to-[#1A3A5F]" />
         
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <AnimatedSection className="text-center mb-16">
-            <span className="text-[#4A9ED0] font-medium tracking-[0.2em] uppercase text-sm">Our Products</span>
-            <h2 className="text-4xl md:text-6xl font-display font-bold text-white mt-4">
-              Wellsys Water Solutions
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <AnimatedSection className="text-center mb-20">
+            <span className="block text-[#8B3D4D] font-medium tracking-[0.3em] uppercase text-base md:text-lg">Our Products</span>
+            <h2 className="text-5xl md:text-7xl font-display font-bold text-white mt-6">
+              <span className="gradient-text-burgundy">Wellsys</span> Water Solutions
             </h2>
-            <p className="text-gray-300 mt-6 max-w-2xl mx-auto text-lg">
+            <p className="text-gray-300 mt-8 text-xl md:text-2xl text-center w-full max-w-3xl mx-auto">
               Industry-leading water coolers and ice machines. Designed for reliability, built for performance.
             </p>
           </AnimatedSection>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
             <AnimatedSection>
               <ProductCard
                 icon={Droplets}
@@ -575,47 +924,51 @@ export default function Home() {
       </section>
 
       {/* Why Us Section */}
-      <section id="why-us" className="py-32 relative overflow-hidden">
+      <section id="why-us" className="py-32 md:py-40 relative overflow-hidden border-t border-[#4A9ED0]/20">
         <div className="absolute inset-0 bg-gradient-to-b from-[#1A3A5F] via-[#0E2240] to-[#0A1628]" />
         
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <AnimatedSection className="text-center mb-16">
-            <span className="text-[#4A9ED0] font-medium tracking-[0.2em] uppercase text-sm">Why Choose Us</span>
-            <h2 className="text-4xl md:text-6xl font-display font-bold text-white mt-4">
-              The Cunningham Difference
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <AnimatedSection className="text-center mb-20">
+            <span className="block text-[#8B3D4D] font-medium tracking-[0.3em] uppercase text-base md:text-lg">Why Choose Us</span>
+            <h2 className="text-5xl md:text-7xl font-display font-bold text-white mt-6">
+              The <span className="gradient-text-burgundy">Cunningham</span> Difference
             </h2>
           </AnimatedSection>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
             {[
               {
                 icon: Award,
                 title: 'Authorized Dealer',
                 description: 'Louisiana\'s only authorized Wellsys dealer with direct manufacturer support.',
+                accent: true,
               },
               {
                 icon: Shield,
                 title: 'Hassle-Free Rental',
                 description: 'No upfront equipment costs. Simple monthly rental includes maintenance.',
+                accent: false,
               },
               {
                 icon: Leaf,
                 title: 'Eco-Friendly',
                 description: 'Eliminate plastic bottle waste and reduce your environmental footprint.',
+                accent: true,
               },
               {
                 icon: Droplets,
                 title: 'Statewide Coverage',
                 description: 'Serving all of Louisiana with reliable delivery and service.',
+                accent: false,
               },
             ].map((item, i) => (
               <AnimatedSection key={i}>
-                <div className="text-center p-8">
+                <div className="text-center p-10 lg:p-12">
                   <div className="feature-icon mx-auto">
-                    <item.icon className="w-8 h-8 text-[#4A9ED0]" />
+                    <item.icon className={`w-10 h-10 ${item.accent ? 'text-[#9B4D5D]' : 'text-[#4A9ED0]'}`} />
                   </div>
-                  <h3 className="text-xl font-display font-bold text-white mb-3">{item.title}</h3>
-                  <p className="text-gray-400">{item.description}</p>
+                  <h3 className="text-2xl font-display font-bold text-white mb-4">{item.title}</h3>
+                  <p className="text-gray-400 text-lg leading-relaxed">{item.description}</p>
                 </div>
               </AnimatedSection>
             ))}
@@ -624,61 +977,61 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-32 relative">
+      <section id="contact" className="py-32 md:py-40 relative border-t border-[#4A9ED0]/20">
         <div className="absolute inset-0 bg-gradient-to-b from-[#0A1628] to-[#0E2240]" />
         
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
             <AnimatedSection>
-              <span className="text-[#4A9ED0] font-medium tracking-[0.2em] uppercase text-sm">Get Started</span>
-              <h2 className="text-4xl md:text-5xl font-display font-bold text-white mt-4 mb-6">
-                Ready for Pure Water?
+              <span className="text-[#8B3D4D] font-medium tracking-[0.3em] uppercase text-base md:text-lg">Get Started</span>
+              <h2 className="text-5xl md:text-6xl font-display font-bold text-white mt-6 mb-8">
+                Ready for <span className="gradient-text-burgundy">Pure</span> Water?
               </h2>
-              <p className="text-gray-300 text-lg mb-10 leading-relaxed">
+              <p className="text-gray-300 text-xl mb-12 leading-relaxed">
                 Let us help you find the perfect water solution for your business. 
                 Request a free, no-obligation quote and discover why Louisiana 
                 businesses trust Cunningham Pure Water.
               </p>
               
-              <div className="space-y-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl glass flex items-center justify-center">
-                    <Phone className="w-6 h-6 text-[#4A9ED0]" />
+              <div className="space-y-8">
+                <div className="flex items-center gap-6">
+                  <div className="w-16 h-16 rounded-2xl glass flex items-center justify-center border border-[#7B2D3D]/30">
+                    <Phone className="w-7 h-7 text-[#9B4D5D]" />
                   </div>
                   <div>
-                    <div className="text-sm text-gray-400 mb-1">Call Us</div>
-                    <a href="tel:3187277873" className="text-white text-xl font-medium hover:text-[#4A9ED0] transition-colors">
+                    <div className="text-base text-gray-400 mb-1">Call Us</div>
+                    <a href="tel:3187277873" className="text-white text-2xl font-medium hover:text-[#9B4D5D] transition-colors">
                       (318) 727-PURE
                     </a>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl glass flex items-center justify-center">
-                    <Mail className="w-6 h-6 text-[#4A9ED0]" />
+                <div className="flex items-center gap-6">
+                  <div className="w-16 h-16 rounded-2xl glass flex items-center justify-center">
+                    <Mail className="w-7 h-7 text-[#4A9ED0]" />
                   </div>
                   <div>
-                    <div className="text-sm text-gray-400 mb-1">Email Us</div>
-                    <a href="mailto:admin@officepurewater.com" className="text-white text-xl font-medium hover:text-[#4A9ED0] transition-colors">
+                    <div className="text-base text-gray-400 mb-1">Email Us</div>
+                    <a href="mailto:admin@officepurewater.com" className="text-white text-2xl font-medium hover:text-[#4A9ED0] transition-colors">
                       admin@officepurewater.com
                     </a>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl glass flex items-center justify-center">
-                    <MapPin className="w-6 h-6 text-[#4A9ED0]" />
+                <div className="flex items-center gap-6">
+                  <div className="w-16 h-16 rounded-2xl glass flex items-center justify-center border border-[#7B2D3D]/30">
+                    <MapPin className="w-7 h-7 text-[#9B4D5D]" />
                   </div>
                   <div>
-                    <div className="text-sm text-gray-400 mb-1">Visit Us</div>
-                    <span className="text-white text-xl font-medium">1215 Texas Ave., Alexandria, LA 71301</span>
+                    <div className="text-base text-gray-400 mb-1">Visit Us</div>
+                    <span className="text-white text-2xl font-medium">1215 Texas Ave., Alexandria, LA 71301</span>
                   </div>
                 </div>
               </div>
             </AnimatedSection>
             
             <AnimatedSection>
-              <div className="glass-dark rounded-3xl p-8 md:p-10">
+              <div className="glass-dark rounded-3xl p-10 md:p-14">
                 <ContactForm />
               </div>
             </AnimatedSection>
@@ -687,19 +1040,20 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-white/10 relative">
+      <footer className="py-16 md:py-20 relative">
         <div className="absolute inset-0 bg-[#0A1628]" />
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#7B2D3D] to-transparent" />
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="flex items-center gap-4">
-              <Image src="/logo.png" alt="Cunningham Pure Water" width={150} height={50} className="h-10 w-auto opacity-80" />
+              <Image src="/logo.png" alt="Cunningham Pure Water" width={180} height={60} className="h-14 w-auto opacity-80" />
             </div>
             
             <div className="text-center md:text-right">
-              <p className="text-gray-400 text-sm">
+              <p className="text-gray-400 text-base">
                 © {new Date().getFullYear()} Cunningham Pure Water LLC. All rights reserved.
               </p>
-              <p className="text-gray-500 text-xs mt-2">
+              <p className="text-gray-500 text-sm mt-3">
                 Louisiana&apos;s Only Authorized Wellsys Dealer
               </p>
             </div>

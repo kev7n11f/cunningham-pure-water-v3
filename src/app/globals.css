@@ -206,7 +206,8 @@ body {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(74, 158, 208, 0.4);
+  box-shadow: 0 10px 30px rgba(123, 45, 61, 0.3), 0 5px 15px rgba(74, 158, 208, 0.3);
+  background: linear-gradient(135deg, var(--burgundy) 0%, var(--water-deep) 100%);
 }
 
 .btn-secondary {
@@ -220,9 +221,11 @@ body {
 }
 
 .btn-secondary:hover {
-  background: var(--water-deep);
+  background: linear-gradient(135deg, var(--burgundy), var(--water-deep));
+  border-color: var(--burgundy);
   color: white;
   transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(123, 45, 61, 0.25);
 }
 
 .section-fade {
@@ -253,11 +256,17 @@ body {
 .product-card {
   background: linear-gradient(145deg, rgba(30, 58, 95, 0.6), rgba(10, 22, 40, 0.8));
   border-radius: 24px;
-  padding: 2rem;
+  padding: 2.5rem;
   border: 1px solid rgba(74, 158, 208, 0.2);
   transition: all 0.4s ease;
   position: relative;
   overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .product-card {
+    padding: 3rem;
+  }
 }
 
 .product-card::before {
@@ -266,8 +275,8 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--water-deep), transparent);
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--burgundy), var(--water-deep), transparent);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -276,8 +285,8 @@ body {
 
 .product-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(74, 158, 208, 0.2);
-  border-color: rgba(74, 158, 208, 0.4);
+  box-shadow: 0 20px 40px rgba(123, 45, 61, 0.15), 0 10px 20px rgba(74, 158, 208, 0.2);
+  border-color: rgba(123, 45, 61, 0.3);
 }
 
 .scroll-indicator {
@@ -367,24 +376,54 @@ input::placeholder, textarea::placeholder { color: rgba(255, 255, 255, 0.4); }
 }
 
 .feature-icon {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(74, 158, 208, 0.2), rgba(74, 158, 208, 0.05));
+  background: linear-gradient(135deg, rgba(74, 158, 208, 0.2), rgba(123, 45, 61, 0.1));
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
   border: 1px solid rgba(74, 158, 208, 0.3);
   transition: all 0.3s ease;
 }
 
 .feature-icon:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 30px rgba(74, 158, 208, 0.3);
+  box-shadow: 0 0 30px rgba(123, 45, 61, 0.3), 0 0 20px rgba(74, 158, 208, 0.2);
+  border-color: rgba(123, 45, 61, 0.4);
 }
 
 @media (max-width: 768px) {
   .stat-number { font-size: 2.5rem; }
   .product-card { padding: 1.5rem; }
 }
+
+/* AquaBuddy Water Mascot Animations */
+@keyframes waterBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes waterWobble {
+  0%, 100% { transform: scale(1, 1); }
+  25% { transform: scale(1.05, 0.95); }
+  50% { transform: scale(0.95, 1.05); }
+  75% { transform: scale(1.02, 0.98); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes wave-hand {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-30deg); }
+  75% { transform: rotate(30deg); }
+}
+
+.aquabuddy-bounce { animation: waterBounce 2s ease-in-out infinite; }
+.aquabuddy-wobble { animation: waterWobble 3s ease-in-out infinite; }
+.aquabuddy-sparkle { animation: sparkle 2s ease-in-out infinite; }
+.aquabuddy-wave { animation: wave-hand 1.5s ease-in-out infinite; }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import AquaBuddy from "@/components/AquaBuddy";
 
 export const metadata: Metadata = {
   title: "Cunningham Pure Water LLC | Louisiana's Only Authorized Wellsys Dealer",
@@ -37,6 +38,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body className="antialiased">
         {children}
+        <AquaBuddy />
       </body>
     </html>
   );
