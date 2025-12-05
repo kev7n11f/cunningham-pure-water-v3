@@ -956,6 +956,43 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Video Showcase Section */}
+      <section className="min-h-screen py-24 md:py-32 relative flex items-center justify-center border-t border-[#4A9ED0]/20 bg-[#0A1628]">
+        <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <AnimatedSection className="text-center mb-20">
+            <span className="block text-[#8B3D4D] font-medium tracking-[0.3em] uppercase text-base md:text-lg">See It In Action</span>
+            <h2 className="text-5xl md:text-7xl font-display font-bold text-white mt-6">
+              Experience <span className="gradient-text-burgundy">Purity</span>
+            </h2>
+            <p className="text-gray-300 mt-8 text-xl md:text-2xl text-center w-full max-w-3xl mx-auto">
+              See how our advanced purification technology transforms your water supply.
+            </p>
+          </AnimatedSection>
+          
+          <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+            {[
+              "https://player.vimeo.com/video/761207400?h=95298ad517",
+              "https://player.vimeo.com/video/1021104216?h=004efc2eb3",
+              "https://player.vimeo.com/video/1022298850?h=a658ee9673",
+              "https://player.vimeo.com/video/1057559362?h=a1204f5727"
+            ].map((src, i) => (
+              <AnimatedSection key={i} delay={i * 0.1}>
+                <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-[#4A9ED0]/20 group bg-black">
+                  <iframe 
+                    src={`${src}&background=1&autoplay=1&loop=1&byline=0&title=0&muted=1`} 
+                    className="absolute inset-0 w-full h-full scale-105 group-hover:scale-100 transition-transform duration-700"
+                    allow="autoplay; fullscreen; picture-in-picture" 
+                    allowFullScreen
+                    title={`Cunningham Pure Water Video ${i+1}`}
+                  />
+                  <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-white/10 rounded-2xl" />
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Why Us Section */}
       <section id="why-us" className="min-h-screen py-24 md:py-32 relative flex items-center justify-center overflow-hidden border-t border-[#4A9ED0]/20">
         <div className="absolute inset-0 bg-gradient-to-b from-[#1A3A5F] via-[#0E2240] to-[#0A1628]" />
