@@ -473,7 +473,7 @@ const FloatingDroplets = () => {
 };
 
 // Animated Section Component
-const AnimatedSection = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
+const AnimatedSection = ({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
   
@@ -483,7 +483,7 @@ const AnimatedSection = ({ children, className = '' }: { children: React.ReactNo
       className={className}
       initial={{ opacity: 0, y: 60 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
+      transition={{ duration: 0.8, ease: 'easeOut', delay }}
     >
       {children}
     </motion.div>
