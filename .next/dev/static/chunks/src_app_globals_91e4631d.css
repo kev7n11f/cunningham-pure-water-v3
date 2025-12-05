@@ -151,6 +151,8 @@
 
   html, :host {
     -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
     tab-size: 4;
     line-height: 1.5;
     font-family: var(--default-font-family, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
@@ -1842,12 +1844,13 @@ body {
 
 .glass {
   -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   background: #ffffff0d;
   border: 1px solid #ffffff1a;
 }
-
 .glass-dark {
   -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   background: #0a1628cc;
   border: 1px solid #4a9ed033;
 }
