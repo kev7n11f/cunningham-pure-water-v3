@@ -339,6 +339,51 @@ export default function AquaBuddy() {
     }
   }, [isOpen]);
 
+  // Listen for custom events to open chat with specific messages
+  useEffect(() => {
+    const handleOpenChat = (event: CustomEvent<{ message?: string; autoSend?: boolean }>) => {
+      setIsOpen(true);
+      
+      // If there's a specific message to send/show
+      if (event.detail?.message) {
+        // Wait for chat to open, then send the message
+        setTimeout(async () => {
+          if (event.detail.autoSend) {
+            // Auto-send a message to get AquaBuddy to respond about a topic
+            const userMessage: Message = { role: 'user', content: event.detail.message! };
+            setMessages(prev => {
+              // If empty, add greeting first
+              if (prev.length === 0) {
+                return [userMessage];
+              }
+              return [...prev, userMessage];
+            });
+            
+            // Send to API
+            try {
+              const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: [userMessage] }),
+              });
+              const data = await response.json();
+              if (data.message) {
+                setMessages(prev => [...prev, { role: 'assistant', content: data.message }]);
+              }
+            } catch (error) {
+              console.error('Failed to send message:', error);
+            }
+          }
+        }, 100);
+      }
+    };
+
+    window.addEventListener('openAquaBuddy', handleOpenChat as EventListener);
+    return () => {
+      window.removeEventListener('openAquaBuddy', handleOpenChat as EventListener);
+    };
+  }, []);
+
   // Send initial greeting when chat opens for the first time
   useEffect(() => {
     if (isOpen && !hasGreeted && messages.length === 0) {

@@ -910,11 +910,48 @@ const ContactForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('Form submitted:', formData);
-    setIsSubmitting(false);
-    setSubmitted(true);
+    
+    try {
+      // Send the form data to the chatbot API which will email it to admin@cpwsales.com
+      const emailContent = `
+New Contact Form Submission:
+
+Name: ${formData.name}
+Email: ${formData.email}
+Phone: ${formData.phone || 'Not provided'}
+Company: ${formData.company || 'Not provided'}
+
+Message:
+${formData.message}
+
+---
+Please follow up with this lead within 24 hours.
+      `.trim();
+
+      // Send to the chat API to process and email
+      await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [{ 
+            role: 'user', 
+            content: `SYSTEM: Email the following contact form submission to admin@cpwsales.com:\n\n${emailContent}` 
+          }],
+          formSubmission: {
+            to: 'admin@cpwsales.com',
+            subject: `New Contact Form Submission from ${formData.name}`,
+            data: formData,
+          }
+        }),
+      });
+      
+      console.log('Form submitted to admin@cpwsales.com:', formData);
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Form submission error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -993,6 +1030,14 @@ const ContactForm = () => {
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         disabled={isSubmitting}
+        onClick={() => {
+          // After form submission, open AquaBuddy to assist
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('openAquaBuddy', { 
+              detail: { message: 'I just submitted a contact form. Can you help me with any questions I might have?', autoSend: true } 
+            }));
+          }, 1500);
+        }}
       >
         {isSubmitting ? 'Sending...' : 'Get Your Free Quote'}
       </motion.button>
@@ -1098,7 +1143,17 @@ export default function Home() {
             <a href="#about" className="nav-link">About</a>
             <a href="#products" className="nav-link">Products</a>
             <a href="#why-us" className="nav-link">Why Us</a>
-            <a href="#contact" className="btn-primary text-sm py-2 px-6">Get Quote</a>
+            <button 
+              onClick={() => {
+                document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+                setTimeout(() => {
+                  window.dispatchEvent(new CustomEvent('openAquaBuddy', { 
+                    detail: { message: 'I\'d like to get a quote for water solutions for my business.', autoSend: true } 
+                  }));
+                }, 500);
+              }}
+              className="btn-primary text-sm py-2 px-6"
+            >Get Quote</button>
           </div>
         </div>
       </motion.nav>
@@ -1162,12 +1217,32 @@ export default function Home() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 1.1 }}
             >
-              <a href="#contact" className="btn-primary text-lg">
+              <button 
+                onClick={() => {
+                  document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+                  setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent('openAquaBuddy', { 
+                      detail: { message: 'I\'m interested in getting started with pure water solutions for my business!', autoSend: true } 
+                    }));
+                  }, 500);
+                }}
+                className="btn-primary text-lg"
+              >
                 Get Started
-              </a>
-              <a href="#products" className="btn-secondary text-lg">
+              </button>
+              <button 
+                onClick={() => {
+                  document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
+                  setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent('openAquaBuddy', { 
+                      detail: { message: 'Tell me about the Wellsys water coolers, ice machines, and other products you offer.', autoSend: true } 
+                    }));
+                  }, 500);
+                }}
+                className="btn-secondary text-lg"
+              >
                 View Products
-              </a>
+              </button>
             </motion.div>
           </motion.div>
           
@@ -1447,6 +1522,20 @@ export default function Home() {
                     <span className="text-white text-2xl font-medium">1215 Texas Ave., Alexandria, LA 71301</span>
                   </div>
                 </div>
+              </div>
+              
+              {/* Google Maps Embed */}
+              <div className="mt-10 rounded-2xl overflow-hidden border border-[#4A9ED0]/20 h-64">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3407.0676892692897!2d-92.44698868485058!3d31.311556981413186!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x86243a5c58fa2ae7%3A0x8d9ded7d2c5cfa57!2s1215%20Texas%20Ave%2C%20Alexandria%2C%20LA%2071301!5e0!3m2!1sen!2sus!4v1701800000000!5m2!1sen!2sus"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Cunningham Pure Water LLC Location"
+                />
               </div>
             </AnimatedSection>
             
