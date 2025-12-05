@@ -1186,7 +1186,7 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.5 }}
             >
               <span className="text-[#4A9ED0] font-medium tracking-[0.3em] uppercase text-sm md:text-base mb-6 block">
-                Louisiana&apos;s Only Authorized Wellsys Dealer
+                Louisiana&apos;s Authorized Wellsys Dealer
               </span>
             </motion.div>
             
@@ -1196,9 +1196,10 @@ export default function Home() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.7 }}
             >
-              <span className="gradient-text-burgundy">Cunningham</span>
+              <span className="gradient-text-burgundy italic font-script" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Cunningham</span>
               <br />
-              <span className="gradient-text">Pure Water</span>
+              <span className="gradient-text uppercase tracking-wide">PURE WATER</span>
+              <span className="text-3xl md:text-4xl lg:text-5xl block mt-2 font-light tracking-widest">LLC</span>
             </motion.h1>
             
             <motion.p
@@ -1276,9 +1277,7 @@ export default function Home() {
               Water Done <span className="gradient-text-burgundy">Right</span>
             </h2>
             <p className="text-xl md:text-2xl text-gray-300 leading-relaxed text-center w-full max-w-4xl mx-auto">
-              Cunningham Pure Water LLC brings Wellsys&apos; industry-leading bottleless water coolers 
-              and ice machines to Louisiana businesses. Advanced multi-stage filtration. 
-              Sleek, modern design. Hassle-free rental programs.
+              Cunningham Pure Water LLC brings Wellsys&apos; industry-leading bottleless water coolers and ice machines to Louisiana businesses. Advanced multi-stage filtration. Sleek, modern design. Hassle-free rental programs.
             </p>
           </AnimatedSection>
           
@@ -1353,7 +1352,7 @@ export default function Home() {
                 description="Commercial-grade ice production with built-in reverse osmosis water purification."
                 imageSrc="/ice-machine-1.png"
                 features={[
-                  'Up to 165 lbs Ice/Day',
+                  'Up to 389 lbs Ice/Day',
                   'Chewable Ice Cubes',
                   'Built-in Reverse Osmosis Filtration',
                   'Self-Sanitizing Options',
@@ -1563,7 +1562,7 @@ export default function Home() {
                 © {new Date().getFullYear()} Cunningham Pure Water LLC. All rights reserved.
               </p>
               <p className="text-gray-500 text-sm mt-3">
-                Louisiana&apos;s Only Authorized Wellsys Dealer
+                Louisiana&apos;s Authorized Wellsys Dealer
               </p>
             </div>
           </div>
