@@ -1383,12 +1383,12 @@ export default function Home() {
       {/* Video Showcase Section */}
       <section className="min-h-screen py-24 md:py-32 relative flex items-center justify-center border-t border-[#4A9ED0]/20 bg-[#0A1628]">
         <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
-          <AnimatedSection className="text-center mb-20">
+          <AnimatedSection className="text-center mb-20 flex flex-col items-center">
             <span className="block text-[#8B3D4D] font-medium tracking-[0.3em] uppercase text-base md:text-lg">See It In Action</span>
             <h2 className="text-5xl md:text-7xl font-display font-bold text-white mt-6">
               Experience <span className="gradient-text-burgundy">Purity</span>
             </h2>
-            <p className="text-gray-300 mt-8 text-xl md:text-2xl text-center w-full max-w-3xl mx-auto">
+            <p className="text-gray-300 mt-8 text-xl md:text-2xl text-center max-w-3xl">
               See how our advanced purification technology transforms your water supply.
             </p>
           </AnimatedSection>
