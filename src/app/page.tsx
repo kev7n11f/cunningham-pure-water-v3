@@ -814,7 +814,7 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="min-h-screen py-24 md:py-32 relative flex items-center border-t border-[#4A9ED0]/20">
+      <section id="about" className="min-h-screen py-24 md:py-32 relative flex items-center justify-center border-t border-[#4A9ED0]/20">
         <div className="absolute inset-0 bg-gradient-to-b from-[#1A3A5F] via-[#0E2240] to-[#0A1628]" />
         
         <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
@@ -863,7 +863,7 @@ export default function Home() {
       </section>
 
       {/* Products Section */}
-      <section id="products" className="min-h-screen py-24 md:py-32 relative flex items-center border-t border-[#4A9ED0]/20">
+      <section id="products" className="min-h-screen py-24 md:py-32 relative flex items-center justify-center border-t border-[#4A9ED0]/20">
         <div className="absolute inset-0 bg-gradient-to-b from-[#0A1628] via-[#0E2240] to-[#1A3A5F]" />
         
         <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
@@ -927,7 +927,7 @@ export default function Home() {
       </section>
 
       {/* Why Us Section */}
-      <section id="why-us" className="min-h-screen py-24 md:py-32 relative flex items-center overflow-hidden border-t border-[#4A9ED0]/20">
+      <section id="why-us" className="min-h-screen py-24 md:py-32 relative flex items-center justify-center overflow-hidden border-t border-[#4A9ED0]/20">
         <div className="absolute inset-0 bg-gradient-to-b from-[#1A3A5F] via-[#0E2240] to-[#0A1628]" />
         
         <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
@@ -980,7 +980,7 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="min-h-screen py-24 md:py-32 relative flex items-center border-t border-[#4A9ED0]/20">
+      <section id="contact" className="min-h-screen py-24 md:py-32 relative flex items-center justify-center border-t border-[#4A9ED0]/20">
         <div className="absolute inset-0 bg-gradient-to-b from-[#0A1628] to-[#0E2240]" />
         
         <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
