@@ -1271,12 +1271,12 @@ export default function Home() {
         <VideoBackground src="https://player.vimeo.com/video/761207400?h=95298ad517" opacity={0.15} />
         
         <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
-          <AnimatedSection className="text-center mb-24">
+          <AnimatedSection className="text-center mb-24 flex flex-col items-center">
             <span className="block text-[#8B3D4D] font-medium tracking-[0.3em] uppercase text-base md:text-lg">About Us</span>
             <h2 className="text-5xl md:text-7xl font-display font-bold text-white mt-6 mb-10">
               Water Done <span className="gradient-text-burgundy">Right</span>
             </h2>
-            <p className="text-xl md:text-2xl text-gray-300 leading-relaxed text-center w-full max-w-4xl mx-auto">
+            <p className="text-xl md:text-2xl text-gray-300 leading-relaxed text-center max-w-4xl">
               Cunningham Pure Water LLC brings Wellsys&apos; industry-leading bottleless water coolers and ice machines to Louisiana businesses. Advanced multi-stage filtration. Sleek, modern design. Hassle-free rental programs.
             </p>
           </AnimatedSection>
@@ -1318,12 +1318,12 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#0A1628] via-[#0E2240] to-[#1A3A5F]" />
         
         <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
-          <AnimatedSection className="text-center mb-20">
+          <AnimatedSection className="text-center mb-20 flex flex-col items-center">
             <span className="block text-[#8B3D4D] font-medium tracking-[0.3em] uppercase text-base md:text-lg">Our Products</span>
             <h2 className="text-5xl md:text-7xl font-display font-bold text-white mt-6">
               <span className="gradient-text-burgundy">Wellsys</span> Water Solutions
             </h2>
-            <p className="text-gray-300 mt-8 text-xl md:text-2xl text-center w-full max-w-3xl mx-auto">
+            <p className="text-gray-300 mt-8 text-xl md:text-2xl text-center max-w-3xl">
               Industry-leading reverse osmosis water coolers and ice machines. Designed for reliability, built for performance.
             </p>
           </AnimatedSection>
