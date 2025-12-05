@@ -1201,7 +1201,7 @@ export default function Home() {
               Water Done <span className="gradient-text-burgundy">Right</span>
             </h2>
             <p className="text-xl md:text-2xl text-gray-300 leading-relaxed text-center w-full max-w-4xl mx-auto">
-              Cunningham Pure Water brings Wellsys&apos; industry-leading bottleless water coolers 
+              Cunningham Pure Water LLC brings Wellsys&apos; industry-leading bottleless water coolers 
               and ice machines to Louisiana businesses. Advanced multi-stage filtration. 
               Sleek, modern design. Hassle-free rental programs.
             </p>
@@ -1261,7 +1261,6 @@ export default function Home() {
                 title="Water Coolers"
                 description="Free-standing and countertop models with advanced multi-stage reverse osmosis filtration."
                 imageSrc="/water-cooler-4.png"
-                popular={true}
                 features={[
                   'Hot, Cold & Ambient Options',
                   '5 & 6 Stage Reverse Osmosis',
@@ -1411,7 +1410,7 @@ export default function Home() {
               <p className="text-gray-300 text-xl mb-12 leading-relaxed">
                 Let us help you find the perfect water solution for your business. 
                 Request a free, no-obligation quote and discover why Louisiana 
-                businesses trust Cunningham Pure Water.
+                businesses trust Cunningham Pure Water LLC.
               </p>
               
               <div className="space-y-8">
@@ -1433,8 +1432,8 @@ export default function Home() {
                   </div>
                   <div>
                     <div className="text-base text-gray-400 mb-1">Email Us</div>
-                    <a href="mailto:admin@officepurewater.com" className="text-white text-2xl font-medium hover:text-[#4A9ED0] transition-colors">
-                      admin@officepurewater.com
+                    <a href="mailto:admin@cpwsales.com" className="text-white text-2xl font-medium hover:text-[#4A9ED0] transition-colors">
+                      admin@cpwsales.com
                     </a>
                   </div>
                 </div>
