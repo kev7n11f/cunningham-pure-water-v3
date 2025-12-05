@@ -757,7 +757,7 @@ export default function Home() {
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Image src="/logo.png" alt="Cunningham Pure Water" width={180} height={60} className="h-12 w-auto" priority />
+            <Image src="/logo.png" alt="Cunningham Pure Water, LLC" width={180} height={60} className="h-12 w-auto" priority />
           </div>
           <div className="hidden md:flex items-center gap-8">
             <a href="#about" className="nav-link">About</a>
@@ -877,7 +877,7 @@ export default function Home() {
               {
                 icon: Droplets,
                 title: 'Pure Filtration',
-                description: '5-6 stage reverse osmosis removes 99%+ of contaminants for the cleanest water possible.',
+                description: '5 & 6 stage reverse osmosis removes 99%+ of contaminants for the cleanest water possible.',
               },
               {
                 icon: Leaf,
@@ -915,7 +915,7 @@ export default function Home() {
               <span className="gradient-text-burgundy">Wellsys</span> Water Solutions
             </h2>
             <p className="text-gray-300 mt-8 text-xl md:text-2xl text-center w-full max-w-3xl mx-auto">
-              Industry-leading water coolers and ice machines. Designed for reliability, built for performance.
+              Industry-leading reverse osmosis water coolers and ice machines. Designed for reliability, built for performance.
             </p>
           </AnimatedSection>
           
@@ -924,12 +924,12 @@ export default function Home() {
               <ProductCard
                 icon={Droplets}
                 title="Water Coolers"
-                description="Free-standing and countertop models with advanced multi-stage filtration."
+                description="Free-standing and countertop models with advanced multi-stage reverse osmosis filtration."
                 imageSrc="https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=2131&auto=format&fit=crop"
                 popular={true}
                 features={[
                   'Hot, Cold & Ambient Options',
-                  '5-6 Stage Reverse Osmosis',
+                  '5 & 6 Stage Reverse Osmosis',
                   'Touchless Dispensing Available',
                   'Energy Efficient Operation',
                   'Sleek, Modern Design',
@@ -941,12 +941,12 @@ export default function Home() {
               <ProductCard
                 icon={Snowflake}
                 title="Ice Machines"
-                description="Commercial-grade ice production with built-in water purification."
+                description="Commercial-grade ice production with built-in reverse osmosis water purification."
                 imageSrc="https://images.unsplash.com/photo-1633934542430-0905ccb5f050?q=80&w=2525&auto=format&fit=crop"
                 features={[
                   'Up to 165 lbs Ice/Day',
                   'Chewable Ice Cubes',
-                  'Built-in Water Filtration',
+                  'Built-in Reverse Osmosis Filtration',
                   'Self-Sanitizing Options',
                   'Antimicrobial Protection',
                 ]}
@@ -957,7 +957,7 @@ export default function Home() {
               <ProductCard
                 icon={Shield}
                 title="Filtration Systems"
-                description="Multi-stage purification that removes 99%+ of contaminants."
+                description="Multi-stage reverse osmosis purification that removes 99%+ of contaminants."
                 imageSrc="https://images.unsplash.com/photo-1521410833026-94a53e994c6f?q=80&w=2668&auto=format&fit=crop"
                 features={[
                   'Reverse Osmosis Membrane',
