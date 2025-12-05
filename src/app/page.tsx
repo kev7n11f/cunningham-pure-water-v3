@@ -628,7 +628,7 @@ export default function Home() {
   const [splashComplete, setSplashComplete] = useState(false);
   const [splashProgress, setSplashProgress] = useState(0);
   const accumulatedScroll = useRef(0);
-  const splashDuration = 800; // Total scroll pixels needed to complete splash
+  const splashDuration = 2500; // Total scroll pixels needed to complete splash (slower animation)
   
   // Lock scrolling and capture scroll events during splash animation
   useEffect(() => {
@@ -695,14 +695,14 @@ export default function Home() {
     offset: ['start start', 'end end'],
   });
 
-  // Text fades out as user scrolls after splash
+  // Text fades out as user scrolls past 50% of hero section (after splash)
   const textOpacity = useTransform(
     scrollYProgress, 
-    [0, 0.3, 0.5], 
+    [0, 0.5, 0.8], 
     [1, 1, 0]
   );
-  const textY = useTransform(scrollYProgress, [0.3, 0.5], [0, -100]);
-  const textScale = useTransform(scrollYProgress, [0.3, 0.5], [1, 0.9]);
+  const textY = useTransform(scrollYProgress, [0.5, 0.8], [0, -50]);
+  const textScale = useTransform(scrollYProgress, [0.5, 0.8], [1, 0.95]);
 
   return (
     <main className="min-h-screen overflow-x-hidden">
@@ -727,7 +727,9 @@ export default function Home() {
       </motion.nav>
 
       {/* Hero Section - Scroll-Locked Animation */}
-      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section ref={heroRef} className="relative h-[200vh]">
+        {/* Sticky container keeps content visible while scrolling through 200vh */}
+        <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
           {/* Background gradient */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#0A1628] via-[#0E2240] to-[#1A3A5F]" />
           
@@ -808,13 +810,14 @@ export default function Home() {
               </motion.div>
             </motion.div>
           )}
+        </div>
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-32 md:py-40 relative border-t border-[#4A9ED0]/20">
+      <section id="about" className="min-h-screen py-24 md:py-32 relative flex items-center border-t border-[#4A9ED0]/20">
         <div className="absolute inset-0 bg-gradient-to-b from-[#1A3A5F] via-[#0E2240] to-[#0A1628]" />
         
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+        <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
           <AnimatedSection className="text-center mb-24">
             <span className="block text-[#8B3D4D] font-medium tracking-[0.3em] uppercase text-base md:text-lg">About Us</span>
             <h2 className="text-5xl md:text-7xl font-display font-bold text-white mt-6 mb-10">
@@ -860,10 +863,10 @@ export default function Home() {
       </section>
 
       {/* Products Section */}
-      <section id="products" className="py-32 md:py-40 relative border-t border-[#4A9ED0]/20">
+      <section id="products" className="min-h-screen py-24 md:py-32 relative flex items-center border-t border-[#4A9ED0]/20">
         <div className="absolute inset-0 bg-gradient-to-b from-[#0A1628] via-[#0E2240] to-[#1A3A5F]" />
         
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+        <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
           <AnimatedSection className="text-center mb-20">
             <span className="block text-[#8B3D4D] font-medium tracking-[0.3em] uppercase text-base md:text-lg">Our Products</span>
             <h2 className="text-5xl md:text-7xl font-display font-bold text-white mt-6">
@@ -924,10 +927,10 @@ export default function Home() {
       </section>
 
       {/* Why Us Section */}
-      <section id="why-us" className="py-32 md:py-40 relative overflow-hidden border-t border-[#4A9ED0]/20">
+      <section id="why-us" className="min-h-screen py-24 md:py-32 relative flex items-center overflow-hidden border-t border-[#4A9ED0]/20">
         <div className="absolute inset-0 bg-gradient-to-b from-[#1A3A5F] via-[#0E2240] to-[#0A1628]" />
         
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+        <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
           <AnimatedSection className="text-center mb-20">
             <span className="block text-[#8B3D4D] font-medium tracking-[0.3em] uppercase text-base md:text-lg">Why Choose Us</span>
             <h2 className="text-5xl md:text-7xl font-display font-bold text-white mt-6">
@@ -977,10 +980,10 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-32 md:py-40 relative border-t border-[#4A9ED0]/20">
+      <section id="contact" className="min-h-screen py-24 md:py-32 relative flex items-center border-t border-[#4A9ED0]/20">
         <div className="absolute inset-0 bg-gradient-to-b from-[#0A1628] to-[#0E2240]" />
         
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+        <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             <AnimatedSection>
               <span className="text-[#8B3D4D] font-medium tracking-[0.3em] uppercase text-base md:text-lg">Get Started</span>

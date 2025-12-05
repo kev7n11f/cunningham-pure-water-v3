@@ -114,3 +114,6 @@ Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allow
 [24:25:16.022] Browser WARN    Please ensure that the container has a non-static position, like 'relative', 'fixed', or 'absolute' to ensure scroll offset is calculated correctly.
 [24:25:32.409] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
 [24:25:32.672] Browser WARN    Please ensure that the container has a non-static position, like 'relative', 'fixed', or 'absolute' to ensure scroll offset is calculated correctly.
+[24:39:13.140] Server  LOG      ✓ Compiled in 74ms
+[24:39:23.502] Server  LOG      ✓ Compiled in 57ms
+[24:39:40.232] Server  LOG      ✓ Compiled in 57ms

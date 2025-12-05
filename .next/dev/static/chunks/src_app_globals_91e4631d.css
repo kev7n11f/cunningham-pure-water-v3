@@ -380,6 +380,10 @@
     pointer-events: none;
   }
 
+  .visible {
+    visibility: visible;
+  }
+
   .absolute {
     position: absolute;
   }
@@ -596,6 +600,10 @@
 
   .h-20 {
     height: calc(var(--spacing) * 20);
+  }
+
+  .h-\[200vh\] {
+    height: 200vh;
   }
 
   .h-\[600px\] {
@@ -1069,6 +1077,10 @@
     padding-block: calc(var(--spacing) * 16);
   }
 
+  .py-24 {
+    padding-block: calc(var(--spacing) * 24);
+  }
+
   .py-32 {
     padding-block: calc(var(--spacing) * 32);
   }
@@ -1354,6 +1366,12 @@
   @media (min-width: 48rem) {
     .md\:py-20 {
       padding-block: calc(var(--spacing) * 20);
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .md\:py-32 {
+      padding-block: calc(var(--spacing) * 32);
     }
   }
 
