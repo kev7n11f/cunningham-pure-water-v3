@@ -282,10 +282,10 @@ const ChatBubble = ({ message, isUser }: { message: Message; isUser: boolean }) 
     className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}
   >
     <div
-      className={`max-w-[85%] p-4 rounded-2xl ${
+      className={`max-w-[85%] p-4 ${
         isUser
-          ? 'bg-gradient-to-r from-[#4A9ED0] to-[#1A6EA0] text-white rounded-br-md'
-          : 'bg-white/10 backdrop-blur-sm text-white border border-white/20 rounded-bl-md'
+          ? 'text-[#4A9ED0]'
+          : 'text-white'
       }`}
     >
       <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
@@ -300,7 +300,7 @@ const TypingIndicator = () => (
     animate={{ opacity: 1 }}
     className="flex justify-start mb-4"
   >
-    <div className="bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-3 rounded-2xl rounded-bl-md">
+    <div className="px-4 py-3">
       <div className="flex gap-1">
         {[0, 1, 2].map((i) => (
           <motion.div
@@ -473,10 +473,10 @@ export default function AquaBuddy() {
             exit={{ opacity: 0, scale: 0.8, y: 50 }}
             transition={{ type: 'spring', stiffness: 200, damping: 20 }}
           >
-            {/* Chat container with glass effect */}
-            <div className="flex-1 flex flex-col bg-gradient-to-b from-[#0A1628]/95 to-[#1A3A5F]/95 backdrop-blur-xl rounded-3xl border border-[#4A9ED0]/30 shadow-2xl overflow-hidden">
+            {/* Chat container with transparent effect */}
+            <div className="flex-1 flex flex-col rounded-3xl overflow-hidden">
               {/* Header */}
-              <div className="flex items-center justify-between p-4 border-b border-white/10 bg-gradient-to-r from-[#4A9ED0]/20 to-[#1A6EA0]/20">
+              <div className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#4A9ED0] to-[#1A6EA0] flex items-center justify-center">
                     <span className="text-lg">💧</span>
@@ -511,7 +511,7 @@ export default function AquaBuddy() {
                     {quickQuestions.map((question, index) => (
                       <motion.button
                         key={index}
-                        className="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-full border border-white/20 transition-colors"
+                        className="text-xs text-white px-3 py-1.5 rounded-full transition-colors hover:text-[#4A9ED0]"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => {
@@ -527,7 +527,7 @@ export default function AquaBuddy() {
               )}
 
               {/* Input */}
-              <div className="p-4 border-t border-white/10">
+              <div className="p-4">
                 <div className="flex gap-2">
                   <input
                     ref={inputRef}
@@ -536,7 +536,7 @@ export default function AquaBuddy() {
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder="Ask about pure water..."
-                    className="flex-1 bg-white/10 border border-white/20 rounded-full px-4 py-3 text-white text-sm placeholder:text-gray-400 focus:outline-none focus:border-[#4A9ED0] transition-colors"
+                    className="flex-1 rounded-full px-4 py-3 text-white text-sm placeholder:text-gray-400 focus:outline-none transition-colors bg-transparent"
                   />
                   <motion.button
                     onClick={sendMessage}
