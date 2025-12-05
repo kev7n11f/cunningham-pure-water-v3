@@ -925,7 +925,7 @@ export default function Home() {
                 icon={Droplets}
                 title="Water Coolers"
                 description="Free-standing and countertop models with advanced multi-stage reverse osmosis filtration."
-                imageSrc="https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=2131&auto=format&fit=crop"
+                imageSrc="/water-cooler-4.png"
                 popular={true}
                 features={[
                   'Hot, Cold & Ambient Options',
@@ -942,7 +942,7 @@ export default function Home() {
                 icon={Snowflake}
                 title="Ice Machines"
                 description="Commercial-grade ice production with built-in reverse osmosis water purification."
-                imageSrc="https://images.unsplash.com/photo-1633934542430-0905ccb5f050?q=80&w=2525&auto=format&fit=crop"
+                imageSrc="/ice-machine-1.png"
                 features={[
                   'Up to 165 lbs Ice/Day',
                   'Chewable Ice Cubes',
@@ -956,15 +956,15 @@ export default function Home() {
             <AnimatedSection>
               <ProductCard
                 icon={Shield}
-                title="Filtration Systems"
-                description="Multi-stage reverse osmosis purification that removes 99%+ of contaminants."
-                imageSrc="https://images.unsplash.com/photo-1521410833026-94a53e994c6f?q=80&w=2668&auto=format&fit=crop"
+                title="Countertop Models"
+                description="Compact countertop units perfect for break rooms and smaller spaces."
+                imageSrc="/countertop-2.jpg"
                 features={[
-                  'Reverse Osmosis Membrane',
-                  'Pre & Post Carbon Filters',
-                  'Sediment Filtration',
-                  'Mineral Enhancement Option',
-                  'Regular Filter Service',
+                  'Space-Saving Design',
+                  'Ice, Hot & Cold Water',
+                  'Advanced Filtration',
+                  'Easy Installation',
+                  'Low Maintenance',
                 ]}
               />
             </AnimatedSection>
