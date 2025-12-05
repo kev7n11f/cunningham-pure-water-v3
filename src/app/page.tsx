@@ -491,20 +491,46 @@ const AnimatedSection = ({ children, className = '' }: { children: React.ReactNo
 };
 
 // Product Card Component
-const ProductCard = ({ icon: Icon, title, description, features }: {
+const ProductCard = ({ icon: Icon, title, description, features, imageSrc, popular }: {
   icon: React.ElementType;
   title: string;
   description: string;
   features: string[];
+  imageSrc?: string;
+  popular?: boolean;
 }) => (
   <motion.div
-    className="product-card h-full"
+    className={`product-card h-full relative overflow-hidden group ${popular ? 'border-2 border-[#9B4D5D]/50' : ''}`}
     whileHover={{ scale: 1.02, y: -10 }}
     transition={{ type: 'spring', stiffness: 300 }}
   >
-    <div className="feature-icon mx-auto">
-      <Icon className="w-12 h-12 text-[#4A9ED0]" />
-    </div>
+    {popular && (
+      <div className="absolute top-0 right-0 bg-[#9B4D5D] text-white text-xs font-bold px-3 py-1 rounded-bl-lg z-20">
+        MOST POPULAR
+      </div>
+    )}
+    
+    {imageSrc && (
+      <div className="relative h-64 -mx-8 -mt-8 mb-8 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0E2240] to-transparent z-10" />
+        <Image 
+          src={imageSrc} 
+          alt={title} 
+          fill 
+          className="object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 feature-icon">
+          <Icon className="w-8 h-8 text-[#4A9ED0]" />
+        </div>
+      </div>
+    )}
+    
+    {!imageSrc && (
+      <div className="feature-icon mx-auto">
+        <Icon className="w-12 h-12 text-[#4A9ED0]" />
+      </div>
+    )}
+    
     <h3 className="text-2xl lg:text-3xl font-display font-bold text-white mb-5 text-center">{title}</h3>
     <p className="text-gray-300 mb-8 text-center text-lg">{description}</p>
     <ul className="space-y-4">
@@ -883,6 +909,8 @@ export default function Home() {
                 icon={Droplets}
                 title="Water Coolers"
                 description="Free-standing and countertop models with advanced multi-stage filtration."
+                imageSrc="https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=2131&auto=format&fit=crop"
+                popular={true}
                 features={[
                   'Hot, Cold & Ambient Options',
                   '5-6 Stage Reverse Osmosis',
@@ -898,6 +926,7 @@ export default function Home() {
                 icon={Snowflake}
                 title="Ice Machines"
                 description="Commercial-grade ice production with built-in water purification."
+                imageSrc="https://images.unsplash.com/photo-1633934542430-0905ccb5f050?q=80&w=2525&auto=format&fit=crop"
                 features={[
                   'Up to 165 lbs Ice/Day',
                   'Chewable Ice Cubes',
@@ -913,6 +942,7 @@ export default function Home() {
                 icon={Shield}
                 title="Filtration Systems"
                 description="Multi-stage purification that removes 99%+ of contaminants."
+                imageSrc="https://images.unsplash.com/photo-1521410833026-94a53e994c6f?q=80&w=2668&auto=format&fit=crop"
                 features={[
                   'Reverse Osmosis Membrane',
                   'Pre & Post Carbon Filters',
