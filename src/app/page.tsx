@@ -472,6 +472,22 @@ const FloatingDroplets = () => {
   );
 };
 
+// Video Background Component
+const VideoBackground = ({ src, opacity = 0.3 }: { src: string; opacity?: number }) => (
+  <div className="absolute inset-0 overflow-hidden z-0">
+    <div className="absolute inset-0 bg-[#0A1628] z-0" />
+    <iframe 
+      src={`${src}&background=1&autoplay=1&loop=1&byline=0&title=0&muted=1`} 
+      className="absolute inset-0 w-full h-full scale-150 opacity-0 animate-fade-in"
+      style={{ opacity }}
+      allow="autoplay; fullscreen; picture-in-picture" 
+      allowFullScreen
+      title="Background Video"
+    />
+    <div className="absolute inset-0 bg-gradient-to-b from-[#0A1628]/90 via-[#0E2240]/80 to-[#0A1628]/90 z-10" />
+  </div>
+);
+
 // Animated Section Component
 const AnimatedSection = ({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
   const ref = useRef(null);
