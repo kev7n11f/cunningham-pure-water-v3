@@ -25,133 +25,266 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$award$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Award$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/award.js [app-client] (ecmascript) <export default as Award>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$zap$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Zap$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/zap.js [app-client] (ecmascript) <export default as Zap>");
 ;
-var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.signature(), _s2 = __turbopack_context__.k.signature(), _s3 = __turbopack_context__.k.signature();
+var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.signature(), _s2 = __turbopack_context__.k.signature(), _s3 = __turbopack_context__.k.signature(), _s4 = __turbopack_context__.k.signature();
 'use client';
 ;
 ;
 ;
 ;
-// Generate varied splash droplets - different sizes, speeds, and trajectories
+// Generate realistic splash droplets with physics-based properties
 const generateSplashDroplets = (count)=>{
     const droplets = [];
     for(let i = 0; i < count; i++){
-        const angle = i / count * Math.PI * 2 + i * 7 % 10 / 10 * 0.3;
-        const randomFactor = i * 1.618 % 1;
-        const randomFactor2 = i * 2.718 % 1;
+        // Use golden ratio for even distribution
+        const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+        const angle = i * goldenAngle + (Math.random() * 0.3 - 0.15);
+        const randomFactor = i * 1.618033988749 % 1;
+        const randomFactor2 = i * 2.718281828459 % 1;
+        const randomFactor3 = i * 3.141592653589 % 1;
+        // Categorize droplets: large slow, medium, small fast, tiny mist
+        const category = randomFactor < 0.15 ? 'large' : randomFactor < 0.4 ? 'medium' : randomFactor < 0.75 ? 'small' : 'mist';
+        const props = {
+            large: {
+                size: 35 + randomFactor2 * 30,
+                speed: 0.4 + randomFactor3 * 0.2,
+                distance: 200 + randomFactor * 400
+            },
+            medium: {
+                size: 15 + randomFactor2 * 18,
+                speed: 0.6 + randomFactor3 * 0.3,
+                distance: 300 + randomFactor * 500
+            },
+            small: {
+                size: 6 + randomFactor2 * 10,
+                speed: 0.9 + randomFactor3 * 0.4,
+                distance: 400 + randomFactor * 600
+            },
+            mist: {
+                size: 2 + randomFactor2 * 5,
+                speed: 1.1 + randomFactor3 * 0.5,
+                distance: 500 + randomFactor * 700
+            }
+        }[category];
         droplets.push({
             angle,
-            // Vary distance significantly for depth effect
-            distance: 150 + randomFactor * 700 + randomFactor2 * 300,
-            // Mix of small fast droplets and larger slower ones
-            size: randomFactor < 0.3 ? 6 + randomFactor * 15 : 15 + randomFactor * 40,
-            speed: randomFactor < 0.3 ? 1.2 + randomFactor * 0.5 : 0.6 + randomFactor * 0.6,
-            // Elongation for motion blur effect
-            elongation: 1.2 + randomFactor * 1.5,
-            // Rotation for natural look
-            rotation: randomFactor * 360,
-            // Delay for staggered splash
-            delay: randomFactor2 * 0.15,
-            // Gravity effect - how much it curves down
-            gravity: 0.3 + randomFactor * 0.7,
-            // Z-depth for parallax
-            zDepth: randomFactor
+            distance: props.distance,
+            size: props.size,
+            speed: props.speed,
+            category,
+            // Realistic elongation based on size (smaller = more elongated in motion)
+            elongation: category === 'mist' ? 2.5 + randomFactor * 1.5 : 1.3 + randomFactor * 0.8,
+            rotation: randomFactor3 * 360,
+            delay: randomFactor2 * 0.12,
+            // Gravity increases with size
+            gravity: category === 'large' ? 0.8 + randomFactor * 0.4 : category === 'medium' ? 0.5 + randomFactor * 0.3 : 0.2 + randomFactor * 0.2,
+            zDepth: randomFactor,
+            // Surface tension affects shape
+            surfaceTension: 0.3 + randomFactor2 * 0.7,
+            // Spin for tumbling effect
+            spin: (randomFactor3 - 0.5) * 720,
+            // Secondary droplet spawning
+            hasTrail: category !== 'mist' && randomFactor > 0.6
         });
     }
     return droplets;
 };
-// Generate water streams - longer streaks of water
+// Generate water streams with realistic fluid dynamics
 const generateWaterStreams = (count)=>{
     const streams = [];
     for(let i = 0; i < count; i++){
-        const angle = i / count * Math.PI * 2;
-        const randomFactor = i * 1.414 % 1;
+        const angle = i / count * Math.PI * 2 + (Math.random() * 0.2 - 0.1);
+        const randomFactor = i * 1.414213562373 % 1;
+        const randomFactor2 = i * 1.732050807569 % 1;
         streams.push({
             angle,
-            length: 100 + randomFactor * 200,
-            width: 3 + randomFactor * 8,
-            speed: 0.8 + randomFactor * 0.4,
-            opacity: 0.4 + randomFactor * 0.4
+            length: 120 + randomFactor * 280,
+            width: 2 + randomFactor2 * 6,
+            speed: 0.7 + randomFactor * 0.5,
+            opacity: 0.5 + randomFactor2 * 0.4,
+            waviness: randomFactor * 15,
+            taper: 0.3 + randomFactor2 * 0.5
         });
     }
     return streams;
 };
-// Generate screen splatter points
+// Generate screen splatter with realistic splash physics
 const generateSplatters = (count)=>{
     const splatters = [];
     for(let i = 0; i < count; i++){
-        const randomX = i * 3.14159 % 1;
-        const randomY = i * 2.71828 % 1;
+        const randomX = i * 3.14159265 % 1;
+        const randomY = i * 2.71828182 % 1;
+        const randomFactor = i * 1.61803398 % 1;
         splatters.push({
-            x: (randomX - 0.5) * 100,
-            y: (randomY - 0.5) * 100,
-            size: 20 + i * 1.618 % 1 * 80,
-            delay: i * 1.414 % 1 * 0.3,
-            dripLength: 30 + i * 2.236 % 1 * 100
+            x: (randomX - 0.5) * 120,
+            y: (randomY - 0.5) * 80,
+            size: 25 + randomFactor * 100,
+            delay: randomFactor * 0.25,
+            dripLength: 40 + i * 2.23606797 % 1 * 150,
+            dripWidth: 3 + randomFactor * 4,
+            subDroplets: Math.floor(3 + randomFactor * 5),
+            spreadAngle: 30 + randomFactor * 60
         });
     }
     return splatters;
 };
-const SPLASH_DROPLETS = generateSplashDroplets(80);
-const WATER_STREAMS = generateWaterStreams(24);
-const SCREEN_SPLATTERS = generateSplatters(15);
-// Realistic water droplet component
+// Generate caustic light patterns
+const generateCaustics = (count)=>{
+    const caustics = [];
+    for(let i = 0; i < count; i++){
+        const randomFactor = i * 1.618 % 1;
+        const randomFactor2 = i * 2.718 % 1;
+        caustics.push({
+            x: randomFactor * 100,
+            y: randomFactor2 * 100,
+            size: 50 + randomFactor * 150,
+            intensity: 0.1 + randomFactor2 * 0.2,
+            phase: randomFactor * Math.PI * 2,
+            delay: 0.05 + randomFactor * 0.2
+        });
+    }
+    return caustics;
+};
+const SPLASH_DROPLETS = generateSplashDroplets(120);
+const WATER_STREAMS = generateWaterStreams(32);
+const SCREEN_SPLATTERS = generateSplatters(18);
+const CAUSTICS = generateCaustics(12);
+// Realistic water droplet with refraction and highlights
 const WaterDroplet = ({ data, scrollProgress })=>{
     const adjustedProgress = Math.max(0, scrollProgress - data.delay);
-    const easedProgress = Math.pow(adjustedProgress, 0.6);
-    const progress = Math.min(1, easedProgress * data.speed * 2);
-    // Calculate position with gravity curve
+    const easedProgress = Math.pow(adjustedProgress, 0.5);
+    const progress = Math.min(1, easedProgress * data.speed * 2.2);
+    // Physics-based trajectory with gravity
     const baseX = Math.cos(data.angle) * data.distance * progress;
     const baseY = Math.sin(data.angle) * data.distance * progress;
-    const gravityOffset = progress * progress * data.gravity * 200;
-    const x = baseX;
+    const gravityOffset = progress * progress * data.gravity * 280;
+    const airResistance = 1 - progress * 0.15;
+    const x = baseX * airResistance;
     const y = baseY + gravityOffset;
-    // Opacity with quick fade in and gradual fade out
-    const opacity = adjustedProgress < 0.03 ? adjustedProgress * 33 : progress > 0.6 ? (1 - progress) * 2.5 : 1;
-    // Scale increases slightly as droplet "approaches" viewer
-    const scale = (0.3 + progress * 0.8) * (1 + data.zDepth * 0.5);
-    // Elongate in direction of motion for speed effect
-    const motionAngle = Math.atan2(y - baseY + 0.1, x) * (180 / Math.PI);
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "absolute pointer-events-none",
-        style: {
-            width: data.size,
-            height: data.size * data.elongation,
-            left: '50%',
-            top: '50%',
-            transform: `translate(${x}px, ${y}px) scale(${scale}) rotate(${data.rotation + motionAngle}deg)`,
-            opacity: opacity * 0.95,
-            background: `
-          radial-gradient(ellipse at 30% 20%, 
-            rgba(255, 255, 255, 0.95) 0%,
-            rgba(200, 230, 250, 0.9) 20%,
-            rgba(120, 190, 230, 0.8) 40%,
-            rgba(60, 150, 200, 0.6) 70%,
-            rgba(30, 100, 160, 0.3) 100%
-          )
-        `,
-            boxShadow: `
-          0 0 ${10 + data.size * 0.3}px rgba(100, 180, 230, 0.5),
-          inset -${data.size * 0.1}px -${data.size * 0.1}px ${data.size * 0.3}px rgba(255,255,255,0.6),
-          inset ${data.size * 0.05}px ${data.size * 0.05}px ${data.size * 0.2}px rgba(30, 100, 160, 0.3)
-        `,
-            borderRadius: '45% 45% 50% 50% / 40% 40% 60% 60%',
-            filter: `blur(${data.zDepth * 1}px)`
-        }
-    }, void 0, false, {
-        fileName: "[project]/src/app/page.tsx",
-        lineNumber: 107,
-        columnNumber: 5
-    }, ("TURBOPACK compile-time value", void 0));
+    // Realistic opacity falloff
+    const opacity = adjustedProgress < 0.02 ? adjustedProgress * 50 : progress > 0.5 ? Math.pow(1 - progress, 1.5) * 2 : 1;
+    // Scale based on z-depth (perspective)
+    const perspectiveScale = (0.4 + progress * 0.7) * (0.8 + data.zDepth * 0.6);
+    // Rotation from spin and motion direction
+    const motionAngle = Math.atan2(gravityOffset + 1, x || 1) * (180 / Math.PI);
+    const totalRotation = data.rotation + motionAngle + data.spin * progress;
+    // Deformation based on velocity (Weber number simulation)
+    const velocity = data.speed * (1 - progress * 0.3);
+    const deformation = 1 + velocity * 0.15 * (1 - data.surfaceTension);
+    if (opacity < 0.01) return null;
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "absolute pointer-events-none",
+                style: {
+                    width: data.size * deformation,
+                    height: data.size * data.elongation / deformation,
+                    left: '50%',
+                    top: '50%',
+                    transform: `translate(${x}px, ${y}px) scale(${perspectiveScale}) rotate(${totalRotation}deg)`,
+                    opacity: opacity * 0.92,
+                    background: data.category === 'mist' ? `radial-gradient(ellipse at 35% 25%, 
+                rgba(255, 255, 255, 0.8) 0%,
+                rgba(200, 230, 255, 0.5) 40%,
+                rgba(150, 200, 240, 0.2) 100%
+              )` : `radial-gradient(ellipse at 30% 20%, 
+                rgba(255, 255, 255, 0.98) 0%,
+                rgba(240, 250, 255, 0.95) 8%,
+                rgba(200, 235, 255, 0.9) 20%,
+                rgba(150, 210, 250, 0.85) 35%,
+                rgba(100, 180, 235, 0.75) 50%,
+                rgba(60, 150, 210, 0.6) 65%,
+                rgba(40, 120, 180, 0.4) 80%,
+                rgba(30, 90, 150, 0.2) 100%
+              )`,
+                    boxShadow: data.category === 'mist' ? 'none' : `
+            0 0 ${8 + data.size * 0.2}px rgba(100, 190, 240, 0.4),
+            0 0 ${15 + data.size * 0.4}px rgba(60, 150, 210, 0.2),
+            inset -${data.size * 0.12}px -${data.size * 0.08}px ${data.size * 0.25}px rgba(255,255,255,0.7),
+            inset ${data.size * 0.06}px ${data.size * 0.04}px ${data.size * 0.15}px rgba(30, 100, 170, 0.25)
+          `,
+                    borderRadius: data.category === 'large' ? '48% 52% 45% 55% / 50% 45% 55% 50%' : '45% 55% 50% 50% / 45% 50% 50% 55%',
+                    filter: data.category === 'mist' ? `blur(${1 + data.zDepth * 2}px)` : `blur(${data.zDepth * 0.8}px)`
+                },
+                children: [
+                    data.category !== 'mist' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            position: 'absolute',
+                            top: '12%',
+                            left: '18%',
+                            width: '35%',
+                            height: '25%',
+                            background: 'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.4) 50%, transparent 100%)',
+                            borderRadius: '50%',
+                            filter: 'blur(1px)',
+                            transform: 'rotate(-20deg)'
+                        }
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/page.tsx",
+                        lineNumber: 199,
+                        columnNumber: 11
+                    }, ("TURBOPACK compile-time value", void 0)),
+                    data.category === 'large' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            position: 'absolute',
+                            top: '55%',
+                            left: '60%',
+                            width: '18%',
+                            height: '12%',
+                            background: 'radial-gradient(ellipse, rgba(255,255,255,0.6) 0%, transparent 100%)',
+                            borderRadius: '50%',
+                            filter: 'blur(1px)'
+                        }
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/page.tsx",
+                        lineNumber: 215,
+                        columnNumber: 11
+                    }, ("TURBOPACK compile-time value", void 0))
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/app/page.tsx",
+                lineNumber: 160,
+                columnNumber: 7
+            }, ("TURBOPACK compile-time value", void 0)),
+            data.hasTrail && progress > 0.2 && progress < 0.8 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "absolute pointer-events-none",
+                style: {
+                    width: data.size * 0.3,
+                    height: data.size * 0.4,
+                    left: '50%',
+                    top: '50%',
+                    transform: `translate(${x * 0.85}px, ${y * 0.85 - 10}px) scale(${perspectiveScale * 0.6})`,
+                    opacity: opacity * 0.5,
+                    background: `radial-gradient(ellipse at 35% 30%, 
+              rgba(255, 255, 255, 0.9) 0%,
+              rgba(180, 220, 250, 0.7) 40%,
+              rgba(100, 180, 230, 0.3) 100%
+            )`,
+                    borderRadius: '45% 55% 50% 50% / 40% 40% 60% 60%',
+                    filter: 'blur(1px)'
+                }
+            }, void 0, false, {
+                fileName: "[project]/src/app/page.tsx",
+                lineNumber: 232,
+                columnNumber: 9
+            }, ("TURBOPACK compile-time value", void 0))
+        ]
+    }, void 0, true);
 };
 _c = WaterDroplet;
-// Water stream component - elongated water trails
+// Realistic water stream with fluid dynamics
 const WaterStream = ({ data, scrollProgress })=>{
-    const progress = Math.min(1, scrollProgress * data.speed * 2.5);
-    const startX = Math.cos(data.angle) * 50 * progress;
-    const startY = Math.sin(data.angle) * 50 * progress;
-    const endX = Math.cos(data.angle) * (50 + data.length) * progress;
-    const endY = Math.sin(data.angle) * (50 + data.length) * progress;
-    const opacity = scrollProgress < 0.05 ? scrollProgress * 20 : progress > 0.5 ? (1 - progress) * 2 * data.opacity : data.opacity;
+    const progress = Math.min(1, scrollProgress * data.speed * 2.8);
+    // Curved trajectory with gravity influence
+    const startDist = 40 * progress;
+    const endDist = (40 + data.length) * progress;
+    const gravityBend = progress * progress * 0.3;
+    const startX = Math.cos(data.angle) * startDist;
+    const startY = Math.sin(data.angle) * startDist + gravityBend * startDist;
+    // Tapered width (thinner at the end)
+    const taperFactor = 1 - progress * data.taper * 0.5;
+    const endWidth = data.width * taperFactor;
+    const opacity = scrollProgress < 0.04 ? scrollProgress * 25 : progress > 0.45 ? Math.pow(1 - progress, 1.5) * 2 * data.opacity : data.opacity;
+    if (opacity < 0.01) return null;
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "absolute pointer-events-none",
         style: {
@@ -159,109 +292,252 @@ const WaterStream = ({ data, scrollProgress })=>{
             top: '50%',
             width: data.length * progress,
             height: data.width,
-            transform: `translate(${startX}px, ${startY}px) rotate(${data.angle * (180 / Math.PI)}deg)`,
+            transform: `translate(${startX}px, ${startY}px) rotate(${data.angle * (180 / Math.PI) + gravityBend * 20}deg)`,
             transformOrigin: 'left center',
             opacity,
             background: `linear-gradient(90deg, 
-          rgba(150, 210, 250, 0.8) 0%,
-          rgba(100, 180, 230, 0.6) 50%,
-          rgba(60, 150, 200, 0.2) 100%
+          rgba(220, 245, 255, 0.9) 0%,
+          rgba(170, 220, 250, 0.8) 15%,
+          rgba(120, 195, 240, 0.65) 40%,
+          rgba(80, 165, 220, 0.45) 70%,
+          rgba(50, 140, 200, 0.15) 100%
         )`,
-            borderRadius: '50px',
-            filter: 'blur(1px)'
+            borderRadius: `${data.width}px ${data.width * taperFactor}px ${data.width * taperFactor}px ${data.width}px / 50%`,
+            boxShadow: `
+          0 0 ${data.width * 2}px rgba(100, 190, 240, 0.3),
+          inset 0 -${data.width * 0.3}px ${data.width * 0.5}px rgba(255,255,255,0.4)
+        `,
+            filter: 'blur(0.5px)'
         }
     }, void 0, false, {
         fileName: "[project]/src/app/page.tsx",
-        lineNumber: 156,
+        lineNumber: 283,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
 _c1 = WaterStream;
-// Screen splatter - water hitting the "screen"
+// Realistic screen splatter with sub-droplets and proper fluid physics
 const ScreenSplatter = ({ data, scrollProgress })=>{
-    const adjustedProgress = Math.max(0, scrollProgress - 0.3 - data.delay);
-    const appearProgress = Math.min(1, adjustedProgress * 4);
-    if (appearProgress <= 0) return null;
-    const dripProgress = Math.max(0, adjustedProgress - 0.2) * 2;
+    _s();
+    const adjustedProgress = Math.max(0, scrollProgress - 0.25 - data.delay);
+    const impactProgress = Math.min(1, adjustedProgress * 5);
+    const spreadProgress = Math.min(1, adjustedProgress * 3);
+    if (impactProgress <= 0) return null;
+    const dripProgress = Math.max(0, adjustedProgress - 0.15) * 1.8;
+    const fadeOut = scrollProgress > 0.7 ? Math.max(0, 1 - (scrollProgress - 0.7) * 3) : 1;
+    // Generate sub-droplet positions
+    const subDroplets = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
+        "ScreenSplatter.useMemo[subDroplets]": ()=>{
+            const drops = [];
+            for(let i = 0; i < data.subDroplets; i++){
+                const angle = data.spreadAngle * (i / data.subDroplets - 0.5) * (Math.PI / 180);
+                const dist = 15 + i * 1.618 % 1 * 35;
+                drops.push({
+                    x: Math.cos(angle + Math.PI / 2) * dist,
+                    y: Math.sin(angle + Math.PI / 2) * dist + dist * 0.3,
+                    size: 4 + i * 2.718 % 1 * 8,
+                    delay: i * 0.02
+                });
+            }
+            return drops;
+        }
+    }["ScreenSplatter.useMemo[subDroplets]"], [
+        data.subDroplets,
+        data.spreadAngle
+    ]);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "absolute pointer-events-none",
         style: {
             left: `calc(50% + ${data.x}%)`,
             top: `calc(50% + ${data.y}%)`,
-            transform: 'translate(-50%, -50%)'
+            transform: 'translate(-50%, -50%)',
+            opacity: fadeOut
         },
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 style: {
-                    width: data.size * appearProgress,
-                    height: data.size * appearProgress * 0.8,
+                    width: data.size * impactProgress,
+                    height: data.size * impactProgress * 0.75,
                     background: `
-            radial-gradient(ellipse at 40% 30%,
-              rgba(255, 255, 255, 0.4) 0%,
-              rgba(180, 220, 250, 0.3) 30%,
-              rgba(100, 180, 230, 0.2) 60%,
-              rgba(60, 150, 200, 0.1) 100%
+            radial-gradient(ellipse at 35% 25%,
+              rgba(255, 255, 255, 0.5) 0%,
+              rgba(230, 245, 255, 0.4) 15%,
+              rgba(180, 225, 250, 0.3) 35%,
+              rgba(120, 195, 240, 0.2) 55%,
+              rgba(80, 165, 220, 0.1) 75%,
+              transparent 100%
             )
           `,
-                    borderRadius: '60% 40% 50% 50% / 50% 50% 40% 60%',
+                    borderRadius: '55% 45% 48% 52% / 45% 52% 48% 55%',
                     boxShadow: `
-            inset 0 0 ${data.size * 0.2}px rgba(255,255,255,0.3),
-            0 0 ${data.size * 0.1}px rgba(100, 180, 230, 0.3)
+            inset 0 0 ${data.size * 0.15}px rgba(255,255,255,0.4),
+            inset -${data.size * 0.05}px -${data.size * 0.03}px ${data.size * 0.1}px rgba(100, 180, 230, 0.2),
+            0 0 ${data.size * 0.08}px rgba(100, 190, 240, 0.25)
           `,
-                    opacity: Math.max(0, 1 - adjustedProgress * 0.8)
-                }
+                    opacity: Math.max(0, 1 - adjustedProgress * 0.7),
+                    transform: `scale(${1 + spreadProgress * 0.2})`
+                },
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    style: {
+                        position: 'absolute',
+                        top: '15%',
+                        left: '20%',
+                        width: '30%',
+                        height: '20%',
+                        background: 'radial-gradient(ellipse, rgba(255,255,255,0.7) 0%, transparent 70%)',
+                        borderRadius: '50%',
+                        filter: 'blur(2px)'
+                    }
+                }, void 0, false, {
+                    fileName: "[project]/src/app/page.tsx",
+                    lineNumber: 380,
+                    columnNumber: 9
+                }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 203,
+                lineNumber: 355,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
+            subDroplets.map((drop, i)=>{
+                const dropProgress = Math.max(0, spreadProgress - drop.delay);
+                if (dropProgress <= 0) return null;
+                return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    style: {
+                        position: 'absolute',
+                        left: drop.x * dropProgress,
+                        top: drop.y * dropProgress,
+                        width: drop.size,
+                        height: drop.size * 1.2,
+                        background: `radial-gradient(ellipse at 35% 30%, 
+                rgba(255, 255, 255, 0.85) 0%,
+                rgba(180, 220, 250, 0.6) 40%,
+                rgba(100, 180, 230, 0.3) 100%
+              )`,
+                        borderRadius: '45% 55% 50% 50% / 40% 40% 60% 60%',
+                        opacity: Math.max(0, 0.8 - dropProgress * 0.6),
+                        boxShadow: '0 0 4px rgba(100, 190, 240, 0.3)'
+                    }
+                }, i, false, {
+                    fileName: "[project]/src/app/page.tsx",
+                    lineNumber: 399,
+                    columnNumber: 11
+                }, ("TURBOPACK compile-time value", void 0));
+            }),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 style: {
                     position: 'absolute',
-                    top: data.size * 0.6,
-                    left: '40%',
-                    width: 4 + data.size * 0.05,
+                    top: data.size * 0.5 * impactProgress,
+                    left: '45%',
+                    width: data.dripWidth,
                     height: data.dripLength * dripProgress,
                     background: `linear-gradient(180deg,
-            rgba(150, 210, 250, 0.3) 0%,
-            rgba(100, 180, 230, 0.4) 50%,
-            rgba(60, 150, 200, 0.2) 100%
+            rgba(200, 235, 255, 0.45) 0%,
+            rgba(150, 215, 250, 0.5) 20%,
+            rgba(100, 185, 240, 0.45) 60%,
+            rgba(70, 160, 220, 0.3) 85%,
+            rgba(50, 140, 200, 0.15) 100%
           )`,
-                    borderRadius: '50% 50% 50% 50% / 10% 10% 90% 90%',
-                    opacity: Math.max(0, 1 - adjustedProgress * 0.5)
+                    borderRadius: '40% 40% 50% 50% / 5% 5% 95% 95%',
+                    opacity: Math.max(0, 1 - adjustedProgress * 0.4) * fadeOut,
+                    boxShadow: `
+            inset -1px 0 2px rgba(255,255,255,0.3),
+            0 0 3px rgba(100, 180, 230, 0.2)
+          `
+                },
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    style: {
+                        position: 'absolute',
+                        left: '20%',
+                        top: 0,
+                        width: '30%',
+                        height: '100%',
+                        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+                        borderRadius: 'inherit'
+                    }
+                }, void 0, false, {
+                    fileName: "[project]/src/app/page.tsx",
+                    lineNumber: 444,
+                    columnNumber: 9
+                }, ("TURBOPACK compile-time value", void 0))
+            }, void 0, false, {
+                fileName: "[project]/src/app/page.tsx",
+                lineNumber: 421,
+                columnNumber: 7
+            }, ("TURBOPACK compile-time value", void 0)),
+            dripProgress > 0.3 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                style: {
+                    position: 'absolute',
+                    top: data.size * 0.6 * impactProgress,
+                    left: '60%',
+                    width: data.dripWidth * 0.6,
+                    height: data.dripLength * 0.5 * Math.max(0, dripProgress - 0.3) * 1.4,
+                    background: `linear-gradient(180deg,
+              rgba(180, 225, 250, 0.4) 0%,
+              rgba(120, 195, 240, 0.35) 50%,
+              rgba(80, 165, 220, 0.2) 100%
+            )`,
+                    borderRadius: '40% 40% 50% 50% / 5% 5% 95% 95%',
+                    opacity: Math.max(0, 0.8 - adjustedProgress * 0.4) * fadeOut
                 }
             }, void 0, false, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 224,
-                columnNumber: 7
+                lineNumber: 459,
+                columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/page.tsx",
-        lineNumber: 194,
+        lineNumber: 345,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
+_s(ScreenSplatter, "C928uiPEruIGCho81vwcPc/XOVY=");
 _c2 = ScreenSplatter;
-// Main Water Splash Effect Component - Bucket of water effect
+// Main Water Splash Effect Component - Ultra-realistic bucket of water effect
 const WaterSplash = ({ scrollProgress })=>{
     // Global fade out - everything disappears as splash completes
     const globalFadeOut = scrollProgress > 0.7 ? Math.max(0, 1 - (scrollProgress - 0.7) * 3.33) : 1;
     // Don't render anything if fully faded out
     if (globalFadeOut <= 0) return null;
-    // Main water mass that bursts toward viewer
-    const centralScale = scrollProgress < 0.2 ? 1 + scrollProgress * 8 : Math.max(0, 2.6 - (scrollProgress - 0.2) * 4);
-    const centralOpacity = (scrollProgress < 0.3 ? Math.min(1, scrollProgress * 5) : Math.max(0, 1 - (scrollProgress - 0.3) * 2)) * globalFadeOut;
+    // Main water mass that bursts toward viewer - more dramatic
+    const centralProgress = Math.min(1, scrollProgress * 3);
+    const centralScale = scrollProgress < 0.15 ? 1 + scrollProgress * 12 : Math.max(0, 2.8 - (scrollProgress - 0.15) * 5);
+    const centralOpacity = (scrollProgress < 0.25 ? Math.min(1, scrollProgress * 6) : Math.max(0, 1 - (scrollProgress - 0.25) * 2.5)) * globalFadeOut;
     // Water sheet that spreads across screen
-    const sheetProgress = Math.max(0, scrollProgress - 0.15);
-    const sheetScale = sheetProgress * 15;
-    const sheetOpacity = (sheetProgress < 0.3 ? sheetProgress * 2 : Math.max(0, 0.6 - (sheetProgress - 0.3) * 1.5)) * globalFadeOut;
+    const sheetProgress = Math.max(0, scrollProgress - 0.1);
+    const sheetScale = sheetProgress * 18;
+    const sheetOpacity = (sheetProgress < 0.25 ? sheetProgress * 2.5 : Math.max(0, 0.65 - (sheetProgress - 0.25) * 1.8)) * globalFadeOut;
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "absolute inset-0 overflow-hidden pointer-events-none",
         style: {
             opacity: globalFadeOut
         },
         children: [
+            CAUSTICS.map((caustic, i)=>{
+                const causticProgress = Math.max(0, scrollProgress - caustic.delay);
+                if (causticProgress <= 0 || causticProgress > 0.6) return null;
+                return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "absolute rounded-full",
+                    style: {
+                        left: `${caustic.x}%`,
+                        top: `${caustic.y}%`,
+                        width: caustic.size * (1 + causticProgress * 0.5),
+                        height: caustic.size * (1 + causticProgress * 0.5),
+                        background: `radial-gradient(ellipse at ${30 + causticProgress * 20}% ${30 + causticProgress * 20}%, 
+                rgba(255, 255, 255, ${0.3 * caustic.intensity}) 0%,
+                rgba(200, 235, 255, ${0.2 * caustic.intensity}) 30%,
+                transparent 70%
+              )`,
+                        filter: 'blur(4px)',
+                        opacity: Math.sin(causticProgress * Math.PI / 0.6) * 0.7,
+                        transform: `rotate(${causticProgress * 45}deg)`
+                    }
+                }, `caustic-${i}`, false, {
+                    fileName: "[project]/src/app/page.tsx",
+                    lineNumber: 512,
+                    columnNumber: 11
+                }, ("TURBOPACK compile-time value", void 0));
+            }),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "absolute inset-0",
                 style: {
@@ -274,7 +550,7 @@ const WaterSplash = ({ scrollProgress })=>{
                 }
             }, void 0, false, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 271,
+                lineNumber: 534,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -316,12 +592,12 @@ const WaterSplash = ({ scrollProgress })=>{
                     }
                 }, void 0, false, {
                     fileName: "[project]/src/app/page.tsx",
-                    lineNumber: 312,
+                    lineNumber: 575,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 284,
+                lineNumber: 547,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -343,7 +619,7 @@ const WaterSplash = ({ scrollProgress })=>{
                 }
             }, void 0, false, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 327,
+                lineNumber: 590,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             [
@@ -369,7 +645,7 @@ const WaterSplash = ({ scrollProgress })=>{
                     }
                 }, ring, false, {
                     fileName: "[project]/src/app/page.tsx",
-                    lineNumber: 354,
+                    lineNumber: 617,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0));
             }),
@@ -378,7 +654,7 @@ const WaterSplash = ({ scrollProgress })=>{
                     scrollProgress: scrollProgress
                 }, `stream-${i}`, false, {
                     fileName: "[project]/src/app/page.tsx",
-                    lineNumber: 371,
+                    lineNumber: 634,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0))),
             SPLASH_DROPLETS.map((data, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(WaterDroplet, {
@@ -386,7 +662,7 @@ const WaterSplash = ({ scrollProgress })=>{
                     scrollProgress: scrollProgress
                 }, `droplet-${i}`, false, {
                     fileName: "[project]/src/app/page.tsx",
-                    lineNumber: 376,
+                    lineNumber: 639,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0))),
             SCREEN_SPLATTERS.map((data, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(ScreenSplatter, {
@@ -394,34 +670,91 @@ const WaterSplash = ({ scrollProgress })=>{
                     scrollProgress: scrollProgress
                 }, `splatter-${i}`, false, {
                     fileName: "[project]/src/app/page.tsx",
-                    lineNumber: 381,
+                    lineNumber: 644,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0))),
-            scrollProgress > 0.5 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+            scrollProgress > 0.4 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
                 children: [
-                    ...Array(8)
+                    ...Array(12)
                 ].map((_, i)=>{
-                    const dripProgress = Math.max(0, scrollProgress - 0.5 - i * 0.03);
-                    const xPos = 10 + i * 12;
+                    const startDelay = 0.4 + i * 0.025;
+                    const dripProgress = Math.max(0, scrollProgress - startDelay);
+                    const xPos = 5 + i * 8;
+                    const dripWidth = 4 + i % 4 * 2;
+                    const maxHeight = 250 + i % 3 * 100;
+                    const wobble = Math.sin(dripProgress * Math.PI * 2) * 2;
                     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "absolute pointer-events-none",
                         style: {
-                            left: `${xPos}%`,
-                            top: 0,
-                            width: 6 + i % 3 * 2,
-                            height: dripProgress * 300,
-                            background: `linear-gradient(180deg,
-                    rgba(150, 210, 250, 0.4) 0%,
-                    rgba(100, 180, 230, 0.5) 30%,
-                    rgba(80, 170, 220, 0.3) 70%,
-                    rgba(60, 150, 200, 0.1) 100%
-                  )`,
-                            borderRadius: '0 0 50% 50%',
-                            opacity: Math.max(0, 1 - dripProgress * 0.5)
-                        }
-                    }, `drip-${i}`, false, {
+                            left: `calc(${xPos}% + ${wobble}px)`,
+                            top: 0
+                        },
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                style: {
+                                    width: dripWidth,
+                                    height: Math.min(dripProgress * 400, maxHeight),
+                                    background: `linear-gradient(180deg,
+                      rgba(180, 225, 250, 0.35) 0%,
+                      rgba(140, 205, 245, 0.45) 20%,
+                      rgba(100, 180, 230, 0.5) 50%,
+                      rgba(80, 165, 220, 0.4) 80%,
+                      rgba(60, 150, 200, 0.25) 100%
+                    )`,
+                                    borderRadius: '40% 40% 50% 50% / 0% 0% 50% 50%',
+                                    opacity: Math.max(0, 1 - dripProgress * 0.4),
+                                    boxShadow: `
+                      inset -1px 0 2px rgba(255,255,255,0.3),
+                      inset 1px 0 1px rgba(100, 180, 230, 0.2),
+                      0 0 4px rgba(100, 180, 230, 0.2)
+                    `
+                                },
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    style: {
+                                        position: 'absolute',
+                                        left: '15%',
+                                        top: 0,
+                                        width: '25%',
+                                        height: '100%',
+                                        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)',
+                                        borderRadius: 'inherit'
+                                    }
+                                }, void 0, false, {
+                                    fileName: "[project]/src/app/page.tsx",
+                                    lineNumber: 689,
+                                    columnNumber: 19
+                                }, ("TURBOPACK compile-time value", void 0))
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/page.tsx",
+                                lineNumber: 668,
+                                columnNumber: 17
+                            }, ("TURBOPACK compile-time value", void 0)),
+                            dripProgress > 0.1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                style: {
+                                    position: 'absolute',
+                                    top: Math.min(dripProgress * 400, maxHeight) - dripWidth * 1.2,
+                                    left: -dripWidth * 0.4,
+                                    width: dripWidth * 1.8,
+                                    height: dripWidth * 2.2,
+                                    background: `radial-gradient(ellipse at 35% 35%,
+                        rgba(255, 255, 255, 0.6) 0%,
+                        rgba(180, 225, 250, 0.5) 30%,
+                        rgba(100, 180, 230, 0.4) 60%,
+                        rgba(60, 150, 200, 0.2) 100%
+                      )`,
+                                    borderRadius: '45% 45% 50% 50% / 40% 40% 60% 60%',
+                                    opacity: Math.max(0, 1 - dripProgress * 0.3),
+                                    boxShadow: '0 2px 4px rgba(100, 180, 230, 0.3)'
+                                }
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/page.tsx",
+                                lineNumber: 704,
+                                columnNumber: 19
+                            }, ("TURBOPACK compile-time value", void 0))
+                        ]
+                    }, `drip-${i}`, true, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 391,
+                        lineNumber: 659,
                         columnNumber: 15
                     }, ("TURBOPACK compile-time value", void 0));
                 })
@@ -429,29 +762,49 @@ const WaterSplash = ({ scrollProgress })=>{
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "absolute inset-0",
                 style: {
-                    background: scrollProgress > 0.2 ? `
-            radial-gradient(circle at 30% 40%, rgba(200, 230, 250, ${(scrollProgress - 0.2) * 0.15}) 0%, transparent 30%),
-            radial-gradient(circle at 70% 30%, rgba(180, 220, 250, ${(scrollProgress - 0.2) * 0.12}) 0%, transparent 25%),
-            radial-gradient(circle at 50% 70%, rgba(160, 210, 245, ${(scrollProgress - 0.2) * 0.1}) 0%, transparent 35%)
+                    background: scrollProgress > 0.15 ? `
+            radial-gradient(circle at 25% 35%, rgba(220, 240, 255, ${(scrollProgress - 0.15) * 0.18}) 0%, transparent 25%),
+            radial-gradient(circle at 75% 25%, rgba(200, 235, 255, ${(scrollProgress - 0.15) * 0.15}) 0%, transparent 20%),
+            radial-gradient(circle at 50% 65%, rgba(180, 225, 250, ${(scrollProgress - 0.15) * 0.12}) 0%, transparent 30%),
+            radial-gradient(circle at 15% 70%, rgba(160, 215, 245, ${(scrollProgress - 0.15) * 0.1}) 0%, transparent 22%),
+            radial-gradient(circle at 85% 60%, rgba(170, 220, 248, ${(scrollProgress - 0.15) * 0.1}) 0%, transparent 18%)
           ` : 'none',
-                    opacity: Math.max(0, 1 - (scrollProgress - 0.6) * 2)
+                    opacity: Math.max(0, 1 - (scrollProgress - 0.55) * 2.2)
                 }
             }, void 0, false, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 415,
+                lineNumber: 730,
                 columnNumber: 7
+            }, ("TURBOPACK compile-time value", void 0)),
+            scrollProgress > 0.35 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "absolute inset-0",
+                style: {
+                    background: `
+              linear-gradient(180deg, 
+                rgba(200, 235, 255, ${Math.min(0.08, (scrollProgress - 0.35) * 0.2)}) 0%,
+                transparent 30%,
+                rgba(180, 225, 250, ${Math.min(0.05, (scrollProgress - 0.35) * 0.15)}) 70%,
+                rgba(160, 215, 245, ${Math.min(0.1, (scrollProgress - 0.35) * 0.25)}) 100%
+              )
+            `,
+                    opacity: Math.max(0, 1 - (scrollProgress - 0.7) * 3)
+                }
+            }, void 0, false, {
+                fileName: "[project]/src/app/page.tsx",
+                lineNumber: 746,
+                columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/page.tsx",
-        lineNumber: 269,
+        lineNumber: 506,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
 _c3 = WaterSplash;
 // Floating Water Droplets Background
 const FloatingDroplets = ()=>{
-    _s();
+    _s1();
     const dropletData = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
         "FloatingDroplets.useMemo[dropletData]": ()=>Array.from({
                 length: 15
@@ -503,20 +856,59 @@ const FloatingDroplets = ()=>{
                 }
             }, drop.id, false, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 446,
+                lineNumber: 781,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)))
     }, void 0, false, {
         fileName: "[project]/src/app/page.tsx",
-        lineNumber: 444,
+        lineNumber: 779,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
-_s(FloatingDroplets, "flrFa787Tb7ITQ2Iip4oE3GDxsI=");
+_s1(FloatingDroplets, "flrFa787Tb7ITQ2Iip4oE3GDxsI=");
 _c4 = FloatingDroplets;
+// Video Background Component
+const VideoBackground = ({ src, opacity = 0.3 })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: "absolute inset-0 overflow-hidden z-0",
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "absolute inset-0 bg-[#0A1628] z-0"
+            }, void 0, false, {
+                fileName: "[project]/src/app/page.tsx",
+                lineNumber: 813,
+                columnNumber: 5
+            }, ("TURBOPACK compile-time value", void 0)),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("iframe", {
+                src: `${src}&background=1&autoplay=1&loop=1&byline=0&title=0&muted=1`,
+                className: "absolute inset-0 w-full h-full scale-150 opacity-0 animate-fade-in",
+                style: {
+                    opacity
+                },
+                allow: "autoplay; fullscreen; picture-in-picture",
+                allowFullScreen: true,
+                title: "Background Video"
+            }, void 0, false, {
+                fileName: "[project]/src/app/page.tsx",
+                lineNumber: 814,
+                columnNumber: 5
+            }, ("TURBOPACK compile-time value", void 0)),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "absolute inset-0 bg-gradient-to-b from-[#0A1628]/90 via-[#0E2240]/80 to-[#0A1628]/90 z-10"
+            }, void 0, false, {
+                fileName: "[project]/src/app/page.tsx",
+                lineNumber: 822,
+                columnNumber: 5
+            }, ("TURBOPACK compile-time value", void 0))
+        ]
+    }, void 0, true, {
+        fileName: "[project]/src/app/page.tsx",
+        lineNumber: 812,
+        columnNumber: 3
+    }, ("TURBOPACK compile-time value", void 0));
+_c5 = VideoBackground;
 // Animated Section Component
-const AnimatedSection = ({ children, className = '' })=>{
-    _s1();
+const AnimatedSection = ({ children, className = '', delay = 0 })=>{
+    _s2();
     const ref = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const isInView = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$utils$2f$use$2d$in$2d$view$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useInView"])(ref, {
         once: true,
@@ -538,24 +930,25 @@ const AnimatedSection = ({ children, className = '' })=>{
         },
         transition: {
             duration: 0.8,
-            ease: 'easeOut'
+            ease: 'easeOut',
+            delay
         },
         children: children
     }, void 0, false, {
         fileName: "[project]/src/app/page.tsx",
-        lineNumber: 481,
+        lineNumber: 832,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
-_s1(AnimatedSection, "DljcBprJKYjULUac3YKdUV9OwZQ=", false, function() {
+_s2(AnimatedSection, "DljcBprJKYjULUac3YKdUV9OwZQ=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$utils$2f$use$2d$in$2d$view$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useInView"]
     ];
 });
-_c5 = AnimatedSection;
+_c6 = AnimatedSection;
 // Product Card Component
-const ProductCard = ({ icon: Icon, title, description, features })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
-        className: "product-card h-full",
+const ProductCard = ({ icon: Icon, title, description, features, imageSrc, popular })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
+        className: `product-card h-full relative overflow-hidden group ${popular ? 'border-2 border-[#9B4D5D]/50' : ''}`,
         whileHover: {
             scale: 1.02,
             y: -10
@@ -565,26 +958,74 @@ const ProductCard = ({ icon: Icon, title, description, features })=>/*#__PURE__*
             stiffness: 300
         },
         children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            popular && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "absolute top-0 right-0 bg-[#9B4D5D] text-white text-xs font-bold px-3 py-1 rounded-bl-lg z-20",
+                children: "MOST POPULAR"
+            }, void 0, false, {
+                fileName: "[project]/src/app/page.tsx",
+                lineNumber: 859,
+                columnNumber: 7
+            }, ("TURBOPACK compile-time value", void 0)),
+            imageSrc && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "relative h-64 -mx-8 -mt-8 mb-8 overflow-hidden",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "absolute inset-0 bg-gradient-to-t from-[#0E2240] to-transparent z-10"
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/page.tsx",
+                        lineNumber: 866,
+                        columnNumber: 9
+                    }, ("TURBOPACK compile-time value", void 0)),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                        src: imageSrc,
+                        alt: title,
+                        fill: true,
+                        className: "object-cover transition-transform duration-700 group-hover:scale-110"
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/page.tsx",
+                        lineNumber: 867,
+                        columnNumber: 9
+                    }, ("TURBOPACK compile-time value", void 0)),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "absolute bottom-4 left-1/2 -translate-x-1/2 z-20 feature-icon",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Icon, {
+                            className: "w-8 h-8 text-[#4A9ED0]"
+                        }, void 0, false, {
+                            fileName: "[project]/src/app/page.tsx",
+                            lineNumber: 874,
+                            columnNumber: 11
+                        }, ("TURBOPACK compile-time value", void 0))
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/page.tsx",
+                        lineNumber: 873,
+                        columnNumber: 9
+                    }, ("TURBOPACK compile-time value", void 0))
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/app/page.tsx",
+                lineNumber: 865,
+                columnNumber: 7
+            }, ("TURBOPACK compile-time value", void 0)),
+            !imageSrc && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "feature-icon mx-auto",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Icon, {
                     className: "w-12 h-12 text-[#4A9ED0]"
                 }, void 0, false, {
                     fileName: "[project]/src/app/page.tsx",
-                    lineNumber: 506,
-                    columnNumber: 7
+                    lineNumber: 881,
+                    columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 505,
-                columnNumber: 5
+                lineNumber: 880,
+                columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                 className: "text-2xl lg:text-3xl font-display font-bold text-white mb-5 text-center",
                 children: title
             }, void 0, false, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 508,
+                lineNumber: 885,
                 columnNumber: 5
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -592,7 +1033,7 @@ const ProductCard = ({ icon: Icon, title, description, features })=>/*#__PURE__*
                 children: description
             }, void 0, false, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 509,
+                lineNumber: 886,
                 columnNumber: 5
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -604,37 +1045,37 @@ const ProductCard = ({ icon: Icon, title, description, features })=>/*#__PURE__*
                                 className: "w-6 h-6 text-[#9B4D5D] flex-shrink-0"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 513,
+                                lineNumber: 890,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 children: feature
                             }, void 0, false, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 514,
+                                lineNumber: 891,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, i, true, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 512,
+                        lineNumber: 889,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)))
             }, void 0, false, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 510,
+                lineNumber: 887,
                 columnNumber: 5
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/page.tsx",
-        lineNumber: 500,
+        lineNumber: 853,
         columnNumber: 3
     }, ("TURBOPACK compile-time value", void 0));
-_c6 = ProductCard;
+_c7 = ProductCard;
 // Contact Form Component
 const ContactForm = ()=>{
-    _s2();
+    _s3();
     const [formData, setFormData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
         name: '',
         email: '',
@@ -671,12 +1112,12 @@ const ContactForm = ()=>{
                         className: "w-10 h-10 text-white"
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 551,
+                        lineNumber: 928,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0))
                 }, void 0, false, {
                     fileName: "[project]/src/app/page.tsx",
-                    lineNumber: 550,
+                    lineNumber: 927,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -684,7 +1125,7 @@ const ContactForm = ()=>{
                     children: "Thank You!"
                 }, void 0, false, {
                     fileName: "[project]/src/app/page.tsx",
-                    lineNumber: 553,
+                    lineNumber: 930,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -692,13 +1133,13 @@ const ContactForm = ()=>{
                     children: "We'll be in touch within 24 hours."
                 }, void 0, false, {
                     fileName: "[project]/src/app/page.tsx",
-                    lineNumber: 554,
+                    lineNumber: 931,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0))
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/page.tsx",
-            lineNumber: 545,
+            lineNumber: 922,
             columnNumber: 7
         }, ("TURBOPACK compile-time value", void 0));
     }
@@ -716,7 +1157,7 @@ const ContactForm = ()=>{
                                 children: "Name *"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 563,
+                                lineNumber: 940,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -730,13 +1171,13 @@ const ContactForm = ()=>{
                                 placeholder: "Your name"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 564,
+                                lineNumber: 941,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 562,
+                        lineNumber: 939,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -746,7 +1187,7 @@ const ContactForm = ()=>{
                                 children: "Email *"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 573,
+                                lineNumber: 950,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -760,19 +1201,19 @@ const ContactForm = ()=>{
                                 placeholder: "you@company.com"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 574,
+                                lineNumber: 951,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 572,
+                        lineNumber: 949,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 561,
+                lineNumber: 938,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -785,7 +1226,7 @@ const ContactForm = ()=>{
                                 children: "Phone"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 585,
+                                lineNumber: 962,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -798,13 +1239,13 @@ const ContactForm = ()=>{
                                 placeholder: "(318) 555-0000"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 586,
+                                lineNumber: 963,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 584,
+                        lineNumber: 961,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -814,7 +1255,7 @@ const ContactForm = ()=>{
                                 children: "Company"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 594,
+                                lineNumber: 971,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -827,19 +1268,19 @@ const ContactForm = ()=>{
                                 placeholder: "Your company name"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 595,
+                                lineNumber: 972,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 593,
+                        lineNumber: 970,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 583,
+                lineNumber: 960,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -849,7 +1290,7 @@ const ContactForm = ()=>{
                         children: "Message *"
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 604,
+                        lineNumber: 981,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
@@ -863,13 +1304,13 @@ const ContactForm = ()=>{
                         placeholder: "Tell us about your water needs..."
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 605,
+                        lineNumber: 982,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 603,
+                lineNumber: 980,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].button, {
@@ -885,20 +1326,20 @@ const ContactForm = ()=>{
                 children: isSubmitting ? 'Sending...' : 'Get Your Free Quote'
             }, void 0, false, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 613,
+                lineNumber: 990,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/page.tsx",
-        lineNumber: 560,
+        lineNumber: 937,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
-_s2(ContactForm, "3skZ9khgBlmHTIICnNmDVHfLWEU=");
-_c7 = ContactForm;
+_s3(ContactForm, "3skZ9khgBlmHTIICnNmDVHfLWEU=");
+_c8 = ContactForm;
 function Home() {
-    _s3();
+    _s4();
     const heroRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const [splashComplete, setSplashComplete] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [splashProgress, setSplashProgress] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(0);
@@ -1020,19 +1461,19 @@ function Home() {
                             className: "flex items-center gap-3",
                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                 src: "/logo.png",
-                                alt: "Cunningham Pure Water",
+                                alt: "Cunningham Pure Water, LLC",
                                 width: 180,
                                 height: 60,
                                 className: "h-12 w-auto",
                                 priority: true
                             }, void 0, false, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 718,
+                                lineNumber: 1095,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/page.tsx",
-                            lineNumber: 717,
+                            lineNumber: 1094,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1044,7 +1485,7 @@ function Home() {
                                     children: "About"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/page.tsx",
-                                    lineNumber: 721,
+                                    lineNumber: 1098,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -1053,7 +1494,7 @@ function Home() {
                                     children: "Products"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/page.tsx",
-                                    lineNumber: 722,
+                                    lineNumber: 1099,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -1062,7 +1503,7 @@ function Home() {
                                     children: "Why Us"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/page.tsx",
-                                    lineNumber: 723,
+                                    lineNumber: 1100,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -1071,24 +1512,24 @@ function Home() {
                                     children: "Get Quote"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/page.tsx",
-                                    lineNumber: 724,
+                                    lineNumber: 1101,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/page.tsx",
-                            lineNumber: 720,
+                            lineNumber: 1097,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/page.tsx",
-                    lineNumber: 716,
+                    lineNumber: 1093,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 710,
+                lineNumber: 1087,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -1101,19 +1542,19 @@ function Home() {
                             className: "absolute inset-0 bg-gradient-to-b from-[#0A1628] via-[#0E2240] to-[#1A3A5F]"
                         }, void 0, false, {
                             fileName: "[project]/src/app/page.tsx",
-                            lineNumber: 734,
+                            lineNumber: 1111,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(FloatingDroplets, {}, void 0, false, {
                             fileName: "[project]/src/app/page.tsx",
-                            lineNumber: 737,
+                            lineNumber: 1114,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(WaterSplash, {
                             scrollProgress: splashProgress
                         }, void 0, false, {
                             fileName: "[project]/src/app/page.tsx",
-                            lineNumber: 740,
+                            lineNumber: 1117,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -1140,12 +1581,12 @@ function Home() {
                                         children: "Louisiana's Only Authorized Wellsys Dealer"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 756,
+                                        lineNumber: 1133,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/page.tsx",
-                                    lineNumber: 751,
+                                    lineNumber: 1128,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].h1, {
@@ -1166,12 +1607,12 @@ function Home() {
                                             children: "Cunningham"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/page.tsx",
-                                            lineNumber: 767,
+                                            lineNumber: 1144,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                             fileName: "[project]/src/app/page.tsx",
-                                            lineNumber: 768,
+                                            lineNumber: 1145,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1179,13 +1620,13 @@ function Home() {
                                             children: "Pure Water"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/page.tsx",
-                                            lineNumber: 769,
+                                            lineNumber: 1146,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/page.tsx",
-                                    lineNumber: 761,
+                                    lineNumber: 1138,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].p, {
@@ -1203,7 +1644,7 @@ function Home() {
                                     children: "Premium water solutions for Louisiana businesses. No bottles. No hassle. Just pure, refreshing water."
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/page.tsx",
-                                    lineNumber: 772,
+                                    lineNumber: 1149,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -1225,7 +1666,7 @@ function Home() {
                                             children: "Get Started"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/page.tsx",
-                                            lineNumber: 788,
+                                            lineNumber: 1165,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -1234,19 +1675,19 @@ function Home() {
                                             children: "View Products"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/page.tsx",
-                                            lineNumber: 791,
+                                            lineNumber: 1168,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/page.tsx",
-                                    lineNumber: 782,
+                                    lineNumber: 1159,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/page.tsx",
-                            lineNumber: 743,
+                            lineNumber: 1120,
                             columnNumber: 11
                         }, this),
                         splashProgress < 0.05 && !splashComplete && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -1263,7 +1704,7 @@ function Home() {
                                     children: "Scroll to explore"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/page.tsx",
-                                    lineNumber: 804,
+                                    lineNumber: 1181,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -1282,40 +1723,41 @@ function Home() {
                                         className: "w-6 h-6 text-[#4A9ED0]"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 809,
+                                        lineNumber: 1186,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/page.tsx",
-                                    lineNumber: 805,
+                                    lineNumber: 1182,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/page.tsx",
-                            lineNumber: 799,
+                            lineNumber: 1176,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/page.tsx",
-                    lineNumber: 732,
+                    lineNumber: 1109,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 730,
+                lineNumber: 1107,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
                 id: "about",
                 className: "min-h-screen py-24 md:py-32 relative flex items-center justify-center border-t border-[#4A9ED0]/20",
                 children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "absolute inset-0 bg-gradient-to-b from-[#1A3A5F] via-[#0E2240] to-[#0A1628]"
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(VideoBackground, {
+                        src: "https://player.vimeo.com/video/761207400?h=95298ad517",
+                        opacity: 0.15
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 818,
+                        lineNumber: 1195,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1329,7 +1771,7 @@ function Home() {
                                         children: "About Us"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 822,
+                                        lineNumber: 1199,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -1341,13 +1783,13 @@ function Home() {
                                                 children: "Right"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/page.tsx",
-                                                lineNumber: 824,
+                                                lineNumber: 1201,
                                                 columnNumber: 26
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 823,
+                                        lineNumber: 1200,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1355,13 +1797,13 @@ function Home() {
                                         children: "Cunningham Pure Water brings Wellsys' industry-leading bottleless water coolers and ice machines to Louisiana businesses. Advanced multi-stage filtration. Sleek, modern design. Hassle-free rental programs."
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 826,
+                                        lineNumber: 1203,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 821,
+                                lineNumber: 1198,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1370,7 +1812,7 @@ function Home() {
                                     {
                                         icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$droplets$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Droplets$3e$__["Droplets"],
                                         title: 'Pure Filtration',
-                                        description: '5-6 stage reverse osmosis removes 99%+ of contaminants for the cleanest water possible.'
+                                        description: '5 & 6 stage reverse osmosis removes 99%+ of contaminants for the cleanest water possible.'
                                     },
                                     {
                                         icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$leaf$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Leaf$3e$__["Leaf"],
@@ -1392,12 +1834,12 @@ function Home() {
                                                         className: "w-10 h-10 text-[#4A9ED0]"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/page.tsx",
-                                                        lineNumber: 854,
+                                                        lineNumber: 1231,
                                                         columnNumber: 21
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/page.tsx",
-                                                    lineNumber: 853,
+                                                    lineNumber: 1230,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1405,7 +1847,7 @@ function Home() {
                                                     children: item.title
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/page.tsx",
-                                                    lineNumber: 856,
+                                                    lineNumber: 1233,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1413,35 +1855,35 @@ function Home() {
                                                     children: item.description
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/page.tsx",
-                                                    lineNumber: 857,
+                                                    lineNumber: 1234,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/page.tsx",
-                                            lineNumber: 852,
+                                            lineNumber: 1229,
                                             columnNumber: 17
                                         }, this)
                                     }, i, false, {
                                         fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 851,
+                                        lineNumber: 1228,
                                         columnNumber: 15
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 833,
+                                lineNumber: 1210,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 820,
+                        lineNumber: 1197,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 817,
+                lineNumber: 1194,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -1452,7 +1894,7 @@ function Home() {
                         className: "absolute inset-0 bg-gradient-to-b from-[#0A1628] via-[#0E2240] to-[#1A3A5F]"
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 867,
+                        lineNumber: 1244,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1466,7 +1908,7 @@ function Home() {
                                         children: "Our Products"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 871,
+                                        lineNumber: 1248,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -1477,28 +1919,28 @@ function Home() {
                                                 children: "Wellsys"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/page.tsx",
-                                                lineNumber: 873,
+                                                lineNumber: 1250,
                                                 columnNumber: 15
                                             }, this),
                                             " Water Solutions"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 872,
+                                        lineNumber: 1249,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                         className: "text-gray-300 mt-8 text-xl md:text-2xl text-center w-full max-w-3xl mx-auto",
-                                        children: "Industry-leading water coolers and ice machines. Designed for reliability, built for performance."
+                                        children: "Industry-leading reverse osmosis water coolers and ice machines. Designed for reliability, built for performance."
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 875,
+                                        lineNumber: 1252,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 870,
+                                lineNumber: 1247,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1508,95 +1950,205 @@ function Home() {
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(ProductCard, {
                                             icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$droplets$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Droplets$3e$__["Droplets"],
                                             title: "Water Coolers",
-                                            description: "Free-standing and countertop models with advanced multi-stage filtration.",
+                                            description: "Free-standing and countertop models with advanced multi-stage reverse osmosis filtration.",
+                                            imageSrc: "/water-cooler-4.png",
+                                            popular: true,
                                             features: [
                                                 'Hot, Cold & Ambient Options',
-                                                '5-6 Stage Reverse Osmosis',
+                                                '5 & 6 Stage Reverse Osmosis',
                                                 'Touchless Dispensing Available',
                                                 'Energy Efficient Operation',
                                                 'Sleek, Modern Design'
                                             ]
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/page.tsx",
-                                            lineNumber: 882,
+                                            lineNumber: 1259,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 881,
+                                        lineNumber: 1258,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(AnimatedSection, {
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(ProductCard, {
                                             icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$snowflake$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Snowflake$3e$__["Snowflake"],
                                             title: "Ice Machines",
-                                            description: "Commercial-grade ice production with built-in water purification.",
+                                            description: "Commercial-grade ice production with built-in reverse osmosis water purification.",
+                                            imageSrc: "/ice-machine-1.png",
                                             features: [
                                                 'Up to 165 lbs Ice/Day',
                                                 'Chewable Ice Cubes',
-                                                'Built-in Water Filtration',
+                                                'Built-in Reverse Osmosis Filtration',
                                                 'Self-Sanitizing Options',
                                                 'Antimicrobial Protection'
                                             ]
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/page.tsx",
-                                            lineNumber: 897,
+                                            lineNumber: 1276,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 896,
+                                        lineNumber: 1275,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(AnimatedSection, {
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(ProductCard, {
                                             icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$shield$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Shield$3e$__["Shield"],
-                                            title: "Filtration Systems",
-                                            description: "Multi-stage purification that removes 99%+ of contaminants.",
+                                            title: "Countertop Models",
+                                            description: "Compact countertop units perfect for break rooms and smaller spaces.",
+                                            imageSrc: "/countertop-2.jpg",
                                             features: [
-                                                'Reverse Osmosis Membrane',
-                                                'Pre & Post Carbon Filters',
-                                                'Sediment Filtration',
-                                                'Mineral Enhancement Option',
-                                                'Regular Filter Service'
+                                                'Space-Saving Design',
+                                                'Ice, Hot & Cold Water',
+                                                'Advanced Filtration',
+                                                'Easy Installation',
+                                                'Low Maintenance'
                                             ]
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/page.tsx",
-                                            lineNumber: 912,
+                                            lineNumber: 1292,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 911,
+                                        lineNumber: 1291,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 880,
+                                lineNumber: 1257,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 869,
+                        lineNumber: 1246,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 866,
+                lineNumber: 1243,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
+                className: "min-h-screen py-24 md:py-32 relative flex items-center justify-center border-t border-[#4A9ED0]/20 bg-[#0A1628]",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10",
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(AnimatedSection, {
+                            className: "text-center mb-20",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                    className: "block text-[#8B3D4D] font-medium tracking-[0.3em] uppercase text-base md:text-lg",
+                                    children: "See It In Action"
+                                }, void 0, false, {
+                                    fileName: "[project]/src/app/page.tsx",
+                                    lineNumber: 1314,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                                    className: "text-5xl md:text-7xl font-display font-bold text-white mt-6",
+                                    children: [
+                                        "Experience ",
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            className: "gradient-text-burgundy",
+                                            children: "Purity"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/app/page.tsx",
+                                            lineNumber: 1316,
+                                            columnNumber: 26
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/app/page.tsx",
+                                    lineNumber: 1315,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                    className: "text-gray-300 mt-8 text-xl md:text-2xl text-center w-full max-w-3xl mx-auto",
+                                    children: "See how our advanced purification technology transforms your water supply."
+                                }, void 0, false, {
+                                    fileName: "[project]/src/app/page.tsx",
+                                    lineNumber: 1318,
+                                    columnNumber: 13
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/src/app/page.tsx",
+                            lineNumber: 1313,
+                            columnNumber: 11
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "grid md:grid-cols-2 gap-8 lg:gap-12",
+                            children: [
+                                "https://player.vimeo.com/video/761207400?h=95298ad517",
+                                "https://player.vimeo.com/video/1021104216?h=004efc2eb3",
+                                "https://player.vimeo.com/video/1022298850?h=a658ee9673",
+                                "https://player.vimeo.com/video/1057559362?h=a1204f5727"
+                            ].map((src, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(AnimatedSection, {
+                                    delay: i * 0.1,
+                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-[#4A9ED0]/20 group bg-black",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("iframe", {
+                                                src: `${src}&background=1&autoplay=1&loop=1&byline=0&title=0&muted=1`,
+                                                className: "absolute inset-0 w-full h-full scale-105 group-hover:scale-100 transition-transform duration-700",
+                                                allow: "autoplay; fullscreen; picture-in-picture",
+                                                allowFullScreen: true,
+                                                title: `Cunningham Pure Water Video ${i + 1}`
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/app/page.tsx",
+                                                lineNumber: 1332,
+                                                columnNumber: 19
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "absolute inset-0 pointer-events-none ring-1 ring-inset ring-white/10 rounded-2xl"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/app/page.tsx",
+                                                lineNumber: 1339,
+                                                columnNumber: 19
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/app/page.tsx",
+                                        lineNumber: 1331,
+                                        columnNumber: 17
+                                    }, this)
+                                }, i, false, {
+                                    fileName: "[project]/src/app/page.tsx",
+                                    lineNumber: 1330,
+                                    columnNumber: 15
+                                }, this))
+                        }, void 0, false, {
+                            fileName: "[project]/src/app/page.tsx",
+                            lineNumber: 1323,
+                            columnNumber: 11
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/src/app/page.tsx",
+                    lineNumber: 1312,
+                    columnNumber: 9
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/src/app/page.tsx",
+                lineNumber: 1311,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
                 id: "why-us",
                 className: "min-h-screen py-24 md:py-32 relative flex items-center justify-center overflow-hidden border-t border-[#4A9ED0]/20",
                 children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "absolute inset-0 bg-gradient-to-b from-[#1A3A5F] via-[#0E2240] to-[#0A1628]"
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(VideoBackground, {
+                        src: "https://player.vimeo.com/video/1021104216?h=004efc2eb3",
+                        opacity: 0.12
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 931,
+                        lineNumber: 1349,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1610,7 +2162,7 @@ function Home() {
                                         children: "Why Choose Us"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 935,
+                                        lineNumber: 1353,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -1622,20 +2174,20 @@ function Home() {
                                                 children: "Cunningham"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/page.tsx",
-                                                lineNumber: 937,
+                                                lineNumber: 1355,
                                                 columnNumber: 19
                                             }, this),
                                             " Difference"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 936,
+                                        lineNumber: 1354,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 934,
+                                lineNumber: 1352,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1675,12 +2227,12 @@ function Home() {
                                                         className: `w-10 h-10 ${item.accent ? 'text-[#9B4D5D]' : 'text-[#4A9ED0]'}`
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/page.tsx",
-                                                        lineNumber: 971,
+                                                        lineNumber: 1389,
                                                         columnNumber: 21
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/page.tsx",
-                                                    lineNumber: 970,
+                                                    lineNumber: 1388,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1688,7 +2240,7 @@ function Home() {
                                                     children: item.title
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/page.tsx",
-                                                    lineNumber: 973,
+                                                    lineNumber: 1391,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1696,46 +2248,47 @@ function Home() {
                                                     children: item.description
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/page.tsx",
-                                                    lineNumber: 974,
+                                                    lineNumber: 1392,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/page.tsx",
-                                            lineNumber: 969,
+                                            lineNumber: 1387,
                                             columnNumber: 17
                                         }, this)
                                     }, i, false, {
                                         fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 968,
+                                        lineNumber: 1386,
                                         columnNumber: 15
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 941,
+                                lineNumber: 1359,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 933,
+                        lineNumber: 1351,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 930,
+                lineNumber: 1348,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
                 id: "contact",
                 className: "min-h-screen py-24 md:py-32 relative flex items-center justify-center border-t border-[#4A9ED0]/20",
                 children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "absolute inset-0 bg-gradient-to-b from-[#0A1628] to-[#0E2240]"
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(VideoBackground, {
+                        src: "https://player.vimeo.com/video/1022298850?h=a658ee9673",
+                        opacity: 0.1
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 984,
+                        lineNumber: 1402,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1750,7 +2303,7 @@ function Home() {
                                             children: "Get Started"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/page.tsx",
-                                            lineNumber: 989,
+                                            lineNumber: 1407,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -1762,14 +2315,14 @@ function Home() {
                                                     children: "Pure"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/page.tsx",
-                                                    lineNumber: 991,
+                                                    lineNumber: 1409,
                                                     columnNumber: 27
                                                 }, this),
                                                 " Water?"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/page.tsx",
-                                            lineNumber: 990,
+                                            lineNumber: 1408,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1777,7 +2330,7 @@ function Home() {
                                             children: "Let us help you find the perfect water solution for your business. Request a free, no-obligation quote and discover why Louisiana businesses trust Cunningham Pure Water."
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/page.tsx",
-                                            lineNumber: 993,
+                                            lineNumber: 1411,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1792,12 +2345,12 @@ function Home() {
                                                                 className: "w-7 h-7 text-[#9B4D5D]"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/page.tsx",
-                                                                lineNumber: 1002,
+                                                                lineNumber: 1420,
                                                                 columnNumber: 21
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/page.tsx",
-                                                            lineNumber: 1001,
+                                                            lineNumber: 1419,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1807,7 +2360,7 @@ function Home() {
                                                                     children: "Call Us"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/page.tsx",
-                                                                    lineNumber: 1005,
+                                                                    lineNumber: 1423,
                                                                     columnNumber: 21
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -1816,19 +2369,19 @@ function Home() {
                                                                     children: "(318) 727-PURE"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/page.tsx",
-                                                                    lineNumber: 1006,
+                                                                    lineNumber: 1424,
                                                                     columnNumber: 21
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/page.tsx",
-                                                            lineNumber: 1004,
+                                                            lineNumber: 1422,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/page.tsx",
-                                                    lineNumber: 1000,
+                                                    lineNumber: 1418,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1840,12 +2393,12 @@ function Home() {
                                                                 className: "w-7 h-7 text-[#4A9ED0]"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/page.tsx",
-                                                                lineNumber: 1014,
+                                                                lineNumber: 1432,
                                                                 columnNumber: 21
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/page.tsx",
-                                                            lineNumber: 1013,
+                                                            lineNumber: 1431,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1855,7 +2408,7 @@ function Home() {
                                                                     children: "Email Us"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/page.tsx",
-                                                                    lineNumber: 1017,
+                                                                    lineNumber: 1435,
                                                                     columnNumber: 21
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -1864,19 +2417,19 @@ function Home() {
                                                                     children: "admin@officepurewater.com"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/page.tsx",
-                                                                    lineNumber: 1018,
+                                                                    lineNumber: 1436,
                                                                     columnNumber: 21
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/page.tsx",
-                                                            lineNumber: 1016,
+                                                            lineNumber: 1434,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/page.tsx",
-                                                    lineNumber: 1012,
+                                                    lineNumber: 1430,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1888,12 +2441,12 @@ function Home() {
                                                                 className: "w-7 h-7 text-[#9B4D5D]"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/page.tsx",
-                                                                lineNumber: 1026,
+                                                                lineNumber: 1444,
                                                                 columnNumber: 21
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/page.tsx",
-                                                            lineNumber: 1025,
+                                                            lineNumber: 1443,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1903,7 +2456,7 @@ function Home() {
                                                                     children: "Visit Us"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/page.tsx",
-                                                                    lineNumber: 1029,
+                                                                    lineNumber: 1447,
                                                                     columnNumber: 21
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1911,31 +2464,31 @@ function Home() {
                                                                     children: "1215 Texas Ave., Alexandria, LA 71301"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/page.tsx",
-                                                                    lineNumber: 1030,
+                                                                    lineNumber: 1448,
                                                                     columnNumber: 21
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/page.tsx",
-                                                            lineNumber: 1028,
+                                                            lineNumber: 1446,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/page.tsx",
-                                                    lineNumber: 1024,
+                                                    lineNumber: 1442,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/page.tsx",
-                                            lineNumber: 999,
+                                            lineNumber: 1417,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/page.tsx",
-                                    lineNumber: 988,
+                                    lineNumber: 1406,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(AnimatedSection, {
@@ -1943,34 +2496,34 @@ function Home() {
                                         className: "glass-dark rounded-3xl p-10 md:p-14",
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(ContactForm, {}, void 0, false, {
                                             fileName: "[project]/src/app/page.tsx",
-                                            lineNumber: 1038,
+                                            lineNumber: 1456,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 1037,
+                                        lineNumber: 1455,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/page.tsx",
-                                    lineNumber: 1036,
+                                    lineNumber: 1454,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/page.tsx",
-                            lineNumber: 987,
+                            lineNumber: 1405,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 986,
+                        lineNumber: 1404,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 983,
+                lineNumber: 1401,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("footer", {
@@ -1980,14 +2533,14 @@ function Home() {
                         className: "absolute inset-0 bg-[#0A1628]"
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 1047,
+                        lineNumber: 1465,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#7B2D3D] to-transparent"
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 1048,
+                        lineNumber: 1466,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2005,12 +2558,12 @@ function Home() {
                                         className: "h-14 w-auto opacity-80"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 1052,
+                                        lineNumber: 1470,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/page.tsx",
-                                    lineNumber: 1051,
+                                    lineNumber: 1469,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2025,7 +2578,7 @@ function Home() {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/page.tsx",
-                                            lineNumber: 1056,
+                                            lineNumber: 1474,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2033,40 +2586,40 @@ function Home() {
                                             children: "Louisiana's Only Authorized Wellsys Dealer"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/page.tsx",
-                                            lineNumber: 1059,
+                                            lineNumber: 1477,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/page.tsx",
-                                    lineNumber: 1055,
+                                    lineNumber: 1473,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/page.tsx",
-                            lineNumber: 1050,
+                            lineNumber: 1468,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 1049,
+                        lineNumber: 1467,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 1046,
+                lineNumber: 1464,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/page.tsx",
-        lineNumber: 708,
+        lineNumber: 1085,
         columnNumber: 5
     }, this);
 }
-_s3(Home, "U+b8YIc4HSAcYMloElpAnRblG+w=", false, function() {
+_s4(Home, "U+b8YIc4HSAcYMloElpAnRblG+w=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$value$2f$use$2d$scroll$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useScroll"],
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$value$2f$use$2d$transform$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useTransform"],
@@ -2074,17 +2627,18 @@ _s3(Home, "U+b8YIc4HSAcYMloElpAnRblG+w=", false, function() {
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$value$2f$use$2d$transform$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useTransform"]
     ];
 });
-_c8 = Home;
-var _c, _c1, _c2, _c3, _c4, _c5, _c6, _c7, _c8;
+_c9 = Home;
+var _c, _c1, _c2, _c3, _c4, _c5, _c6, _c7, _c8, _c9;
 __turbopack_context__.k.register(_c, "WaterDroplet");
 __turbopack_context__.k.register(_c1, "WaterStream");
 __turbopack_context__.k.register(_c2, "ScreenSplatter");
 __turbopack_context__.k.register(_c3, "WaterSplash");
 __turbopack_context__.k.register(_c4, "FloatingDroplets");
-__turbopack_context__.k.register(_c5, "AnimatedSection");
-__turbopack_context__.k.register(_c6, "ProductCard");
-__turbopack_context__.k.register(_c7, "ContactForm");
-__turbopack_context__.k.register(_c8, "Home");
+__turbopack_context__.k.register(_c5, "VideoBackground");
+__turbopack_context__.k.register(_c6, "AnimatedSection");
+__turbopack_context__.k.register(_c7, "ProductCard");
+__turbopack_context__.k.register(_c8, "ContactForm");
+__turbopack_context__.k.register(_c9, "Home");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
 }

@@ -5,75 +5,119 @@ import Image from 'next/image';
 import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
 import { Droplets, Snowflake, Shield, Leaf, Phone, Mail, MapPin, ChevronDown, Check, Award, Zap } from 'lucide-react';
 
-// Generate varied splash droplets - different sizes, speeds, and trajectories
+// Generate realistic splash droplets with physics-based properties
 const generateSplashDroplets = (count: number) => {
   const droplets = [];
   for (let i = 0; i < count; i++) {
-    const angle = (i / count) * Math.PI * 2 + (((i * 7) % 10) / 10) * 0.3;
-    const randomFactor = ((i * 1.618) % 1);
-    const randomFactor2 = ((i * 2.718) % 1);
+    // Use golden ratio for even distribution
+    const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+    const angle = i * goldenAngle + (Math.random() * 0.3 - 0.15);
+    const randomFactor = ((i * 1.618033988749) % 1);
+    const randomFactor2 = ((i * 2.718281828459) % 1);
+    const randomFactor3 = ((i * 3.141592653589) % 1);
+    
+    // Categorize droplets: large slow, medium, small fast, tiny mist
+    const category = randomFactor < 0.15 ? 'large' : 
+                     randomFactor < 0.4 ? 'medium' : 
+                     randomFactor < 0.75 ? 'small' : 'mist';
+    
+    const props = {
+      large: { size: 35 + randomFactor2 * 30, speed: 0.4 + randomFactor3 * 0.2, distance: 200 + randomFactor * 400 },
+      medium: { size: 15 + randomFactor2 * 18, speed: 0.6 + randomFactor3 * 0.3, distance: 300 + randomFactor * 500 },
+      small: { size: 6 + randomFactor2 * 10, speed: 0.9 + randomFactor3 * 0.4, distance: 400 + randomFactor * 600 },
+      mist: { size: 2 + randomFactor2 * 5, speed: 1.1 + randomFactor3 * 0.5, distance: 500 + randomFactor * 700 },
+    }[category];
     
     droplets.push({
       angle,
-      // Vary distance significantly for depth effect
-      distance: 150 + randomFactor * 700 + randomFactor2 * 300,
-      // Mix of small fast droplets and larger slower ones
-      size: randomFactor < 0.3 ? 6 + randomFactor * 15 : 15 + randomFactor * 40,
-      speed: randomFactor < 0.3 ? 1.2 + randomFactor * 0.5 : 0.6 + randomFactor * 0.6,
-      // Elongation for motion blur effect
-      elongation: 1.2 + randomFactor * 1.5,
-      // Rotation for natural look
-      rotation: randomFactor * 360,
-      // Delay for staggered splash
-      delay: randomFactor2 * 0.15,
-      // Gravity effect - how much it curves down
-      gravity: 0.3 + randomFactor * 0.7,
-      // Z-depth for parallax
+      distance: props.distance,
+      size: props.size,
+      speed: props.speed,
+      category,
+      // Realistic elongation based on size (smaller = more elongated in motion)
+      elongation: category === 'mist' ? 2.5 + randomFactor * 1.5 : 1.3 + randomFactor * 0.8,
+      rotation: randomFactor3 * 360,
+      delay: randomFactor2 * 0.12,
+      // Gravity increases with size
+      gravity: category === 'large' ? 0.8 + randomFactor * 0.4 : 
+               category === 'medium' ? 0.5 + randomFactor * 0.3 : 0.2 + randomFactor * 0.2,
       zDepth: randomFactor,
+      // Surface tension affects shape
+      surfaceTension: 0.3 + randomFactor2 * 0.7,
+      // Spin for tumbling effect
+      spin: (randomFactor3 - 0.5) * 720,
+      // Secondary droplet spawning
+      hasTrail: category !== 'mist' && randomFactor > 0.6,
     });
   }
   return droplets;
 };
 
-// Generate water streams - longer streaks of water
+// Generate water streams with realistic fluid dynamics
 const generateWaterStreams = (count: number) => {
   const streams = [];
   for (let i = 0; i < count; i++) {
-    const angle = (i / count) * Math.PI * 2;
-    const randomFactor = ((i * 1.414) % 1);
+    const angle = (i / count) * Math.PI * 2 + (Math.random() * 0.2 - 0.1);
+    const randomFactor = ((i * 1.414213562373) % 1);
+    const randomFactor2 = ((i * 1.732050807569) % 1);
     streams.push({
       angle,
-      length: 100 + randomFactor * 200,
-      width: 3 + randomFactor * 8,
-      speed: 0.8 + randomFactor * 0.4,
-      opacity: 0.4 + randomFactor * 0.4,
+      length: 120 + randomFactor * 280,
+      width: 2 + randomFactor2 * 6,
+      speed: 0.7 + randomFactor * 0.5,
+      opacity: 0.5 + randomFactor2 * 0.4,
+      waviness: randomFactor * 15,
+      taper: 0.3 + randomFactor2 * 0.5,
     });
   }
   return streams;
 };
 
-// Generate screen splatter points
+// Generate screen splatter with realistic splash physics
 const generateSplatters = (count: number) => {
   const splatters = [];
   for (let i = 0; i < count; i++) {
-    const randomX = ((i * 3.14159) % 1);
-    const randomY = ((i * 2.71828) % 1);
+    const randomX = ((i * 3.14159265) % 1);
+    const randomY = ((i * 2.71828182) % 1);
+    const randomFactor = ((i * 1.61803398) % 1);
     splatters.push({
-      x: (randomX - 0.5) * 100, // percentage from center
-      y: (randomY - 0.5) * 100,
-      size: 20 + ((i * 1.618) % 1) * 80,
-      delay: ((i * 1.414) % 1) * 0.3,
-      dripLength: 30 + ((i * 2.236) % 1) * 100,
+      x: (randomX - 0.5) * 120,
+      y: (randomY - 0.5) * 80,
+      size: 25 + randomFactor * 100,
+      delay: randomFactor * 0.25,
+      dripLength: 40 + ((i * 2.23606797) % 1) * 150,
+      dripWidth: 3 + randomFactor * 4,
+      subDroplets: Math.floor(3 + randomFactor * 5),
+      spreadAngle: 30 + randomFactor * 60,
     });
   }
   return splatters;
 };
 
-const SPLASH_DROPLETS = generateSplashDroplets(80);
-const WATER_STREAMS = generateWaterStreams(24);
-const SCREEN_SPLATTERS = generateSplatters(15);
+// Generate caustic light patterns
+const generateCaustics = (count: number) => {
+  const caustics = [];
+  for (let i = 0; i < count; i++) {
+    const randomFactor = ((i * 1.618) % 1);
+    const randomFactor2 = ((i * 2.718) % 1);
+    caustics.push({
+      x: randomFactor * 100,
+      y: randomFactor2 * 100,
+      size: 50 + randomFactor * 150,
+      intensity: 0.1 + randomFactor2 * 0.2,
+      phase: randomFactor * Math.PI * 2,
+      delay: 0.05 + randomFactor * 0.2, // Stagger the caustic appearance
+    });
+  }
+  return caustics;
+};
 
-// Realistic water droplet component
+const SPLASH_DROPLETS = generateSplashDroplets(120);
+const WATER_STREAMS = generateWaterStreams(32);
+const SCREEN_SPLATTERS = generateSplatters(18);
+const CAUSTICS = generateCaustics(12);
+
+// Realistic water droplet with refraction and highlights
 const WaterDroplet = ({ 
   data,
   scrollProgress 
@@ -82,59 +126,133 @@ const WaterDroplet = ({
   scrollProgress: number;
 }) => {
   const adjustedProgress = Math.max(0, scrollProgress - data.delay);
-  const easedProgress = Math.pow(adjustedProgress, 0.6);
-  const progress = Math.min(1, easedProgress * data.speed * 2);
+  const easedProgress = Math.pow(adjustedProgress, 0.5);
+  const progress = Math.min(1, easedProgress * data.speed * 2.2);
   
-  // Calculate position with gravity curve
+  // Physics-based trajectory with gravity
   const baseX = Math.cos(data.angle) * data.distance * progress;
   const baseY = Math.sin(data.angle) * data.distance * progress;
-  const gravityOffset = progress * progress * data.gravity * 200;
+  const gravityOffset = progress * progress * data.gravity * 280;
+  const airResistance = 1 - progress * 0.15;
   
-  const x = baseX;
+  const x = baseX * airResistance;
   const y = baseY + gravityOffset;
   
-  // Opacity with quick fade in and gradual fade out
-  const opacity = adjustedProgress < 0.03 ? adjustedProgress * 33 : 
-                  progress > 0.6 ? (1 - progress) * 2.5 : 1;
+  // Realistic opacity falloff
+  const opacity = adjustedProgress < 0.02 ? adjustedProgress * 50 : 
+                  progress > 0.5 ? Math.pow(1 - progress, 1.5) * 2 : 1;
   
-  // Scale increases slightly as droplet "approaches" viewer
-  const scale = (0.3 + progress * 0.8) * (1 + data.zDepth * 0.5);
+  // Scale based on z-depth (perspective)
+  const perspectiveScale = (0.4 + progress * 0.7) * (0.8 + data.zDepth * 0.6);
   
-  // Elongate in direction of motion for speed effect
-  const motionAngle = Math.atan2(y - baseY + 0.1, x) * (180 / Math.PI);
+  // Rotation from spin and motion direction
+  const motionAngle = Math.atan2(gravityOffset + 1, x || 1) * (180 / Math.PI);
+  const totalRotation = data.rotation + motionAngle + (data.spin * progress);
+  
+  // Deformation based on velocity (Weber number simulation)
+  const velocity = data.speed * (1 - progress * 0.3);
+  const deformation = 1 + velocity * 0.15 * (1 - data.surfaceTension);
+  
+  if (opacity < 0.01) return null;
   
   return (
-    <div
-      className="absolute pointer-events-none"
-      style={{
-        width: data.size,
-        height: data.size * data.elongation,
-        left: '50%',
-        top: '50%',
-        transform: `translate(${x}px, ${y}px) scale(${scale}) rotate(${data.rotation + motionAngle}deg)`,
-        opacity: opacity * 0.95,
-        background: `
-          radial-gradient(ellipse at 30% 20%, 
-            rgba(255, 255, 255, 0.95) 0%,
-            rgba(200, 230, 250, 0.9) 20%,
-            rgba(120, 190, 230, 0.8) 40%,
-            rgba(60, 150, 200, 0.6) 70%,
-            rgba(30, 100, 160, 0.3) 100%
-          )
-        `,
-        boxShadow: `
-          0 0 ${10 + data.size * 0.3}px rgba(100, 180, 230, 0.5),
-          inset -${data.size * 0.1}px -${data.size * 0.1}px ${data.size * 0.3}px rgba(255,255,255,0.6),
-          inset ${data.size * 0.05}px ${data.size * 0.05}px ${data.size * 0.2}px rgba(30, 100, 160, 0.3)
-        `,
-        borderRadius: '45% 45% 50% 50% / 40% 40% 60% 60%',
-        filter: `blur(${data.zDepth * 1}px)`,
-      }}
-    />
+    <>
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          width: data.size * deformation,
+          height: data.size * data.elongation / deformation,
+          left: '50%',
+          top: '50%',
+          transform: `translate(${x}px, ${y}px) scale(${perspectiveScale}) rotate(${totalRotation}deg)`,
+          opacity: opacity * 0.92,
+          background: data.category === 'mist' 
+            ? `radial-gradient(ellipse at 35% 25%, 
+                rgba(255, 255, 255, 0.8) 0%,
+                rgba(200, 230, 255, 0.5) 40%,
+                rgba(150, 200, 240, 0.2) 100%
+              )`
+            : `radial-gradient(ellipse at 30% 20%, 
+                rgba(255, 255, 255, 0.98) 0%,
+                rgba(240, 250, 255, 0.95) 8%,
+                rgba(200, 235, 255, 0.9) 20%,
+                rgba(150, 210, 250, 0.85) 35%,
+                rgba(100, 180, 235, 0.75) 50%,
+                rgba(60, 150, 210, 0.6) 65%,
+                rgba(40, 120, 180, 0.4) 80%,
+                rgba(30, 90, 150, 0.2) 100%
+              )`,
+          boxShadow: data.category === 'mist' ? 'none' : `
+            0 0 ${8 + data.size * 0.2}px rgba(100, 190, 240, 0.4),
+            0 0 ${15 + data.size * 0.4}px rgba(60, 150, 210, 0.2),
+            inset -${data.size * 0.12}px -${data.size * 0.08}px ${data.size * 0.25}px rgba(255,255,255,0.7),
+            inset ${data.size * 0.06}px ${data.size * 0.04}px ${data.size * 0.15}px rgba(30, 100, 170, 0.25)
+          `,
+          borderRadius: data.category === 'large' 
+            ? '48% 52% 45% 55% / 50% 45% 55% 50%'
+            : '45% 55% 50% 50% / 45% 50% 50% 55%',
+          filter: data.category === 'mist' ? `blur(${1 + data.zDepth * 2}px)` : `blur(${data.zDepth * 0.8}px)`,
+        }}
+      >
+        {/* Primary highlight - simulates light refraction */}
+        {data.category !== 'mist' && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '12%',
+              left: '18%',
+              width: '35%',
+              height: '25%',
+              background: 'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.4) 50%, transparent 100%)',
+              borderRadius: '50%',
+              filter: 'blur(1px)',
+              transform: 'rotate(-20deg)',
+            }}
+          />
+        )}
+        {/* Secondary highlight */}
+        {data.category === 'large' && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '55%',
+              left: '60%',
+              width: '18%',
+              height: '12%',
+              background: 'radial-gradient(ellipse, rgba(255,255,255,0.6) 0%, transparent 100%)',
+              borderRadius: '50%',
+              filter: 'blur(1px)',
+            }}
+          />
+        )}
+      </div>
+      
+      {/* Trail droplets for larger drops */}
+      {data.hasTrail && progress > 0.2 && progress < 0.8 && (
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            width: data.size * 0.3,
+            height: data.size * 0.4,
+            left: '50%',
+            top: '50%',
+            transform: `translate(${x * 0.85}px, ${y * 0.85 - 10}px) scale(${perspectiveScale * 0.6})`,
+            opacity: opacity * 0.5,
+            background: `radial-gradient(ellipse at 35% 30%, 
+              rgba(255, 255, 255, 0.9) 0%,
+              rgba(180, 220, 250, 0.7) 40%,
+              rgba(100, 180, 230, 0.3) 100%
+            )`,
+            borderRadius: '45% 55% 50% 50% / 40% 40% 60% 60%',
+            filter: 'blur(1px)',
+          }}
+        />
+      )}
+    </>
   );
 };
 
-// Water stream component - elongated water trails
+// Realistic water stream with fluid dynamics
 const WaterStream = ({
   data,
   scrollProgress
@@ -142,15 +260,24 @@ const WaterStream = ({
   data: typeof WATER_STREAMS[0];
   scrollProgress: number;
 }) => {
-  const progress = Math.min(1, scrollProgress * data.speed * 2.5);
+  const progress = Math.min(1, scrollProgress * data.speed * 2.8);
   
-  const startX = Math.cos(data.angle) * 50 * progress;
-  const startY = Math.sin(data.angle) * 50 * progress;
-  const endX = Math.cos(data.angle) * (50 + data.length) * progress;
-  const endY = Math.sin(data.angle) * (50 + data.length) * progress;
+  // Curved trajectory with gravity influence
+  const startDist = 40 * progress;
+  const endDist = (40 + data.length) * progress;
+  const gravityBend = progress * progress * 0.3;
   
-  const opacity = scrollProgress < 0.05 ? scrollProgress * 20 :
-                  progress > 0.5 ? (1 - progress) * 2 * data.opacity : data.opacity;
+  const startX = Math.cos(data.angle) * startDist;
+  const startY = Math.sin(data.angle) * startDist + gravityBend * startDist;
+  
+  // Tapered width (thinner at the end)
+  const taperFactor = 1 - (progress * data.taper * 0.5);
+  const endWidth = data.width * taperFactor;
+  
+  const opacity = scrollProgress < 0.04 ? scrollProgress * 25 :
+                  progress > 0.45 ? Math.pow(1 - progress, 1.5) * 2 * data.opacity : data.opacity;
+  
+  if (opacity < 0.01) return null;
   
   return (
     <div
@@ -160,22 +287,28 @@ const WaterStream = ({
         top: '50%',
         width: data.length * progress,
         height: data.width,
-        transform: `translate(${startX}px, ${startY}px) rotate(${data.angle * (180 / Math.PI)}deg)`,
+        transform: `translate(${startX}px, ${startY}px) rotate(${data.angle * (180 / Math.PI) + gravityBend * 20}deg)`,
         transformOrigin: 'left center',
         opacity,
         background: `linear-gradient(90deg, 
-          rgba(150, 210, 250, 0.8) 0%,
-          rgba(100, 180, 230, 0.6) 50%,
-          rgba(60, 150, 200, 0.2) 100%
+          rgba(220, 245, 255, 0.9) 0%,
+          rgba(170, 220, 250, 0.8) 15%,
+          rgba(120, 195, 240, 0.65) 40%,
+          rgba(80, 165, 220, 0.45) 70%,
+          rgba(50, 140, 200, 0.15) 100%
         )`,
-        borderRadius: '50px',
-        filter: 'blur(1px)',
+        borderRadius: `${data.width}px ${data.width * taperFactor}px ${data.width * taperFactor}px ${data.width}px / 50%`,
+        boxShadow: `
+          0 0 ${data.width * 2}px rgba(100, 190, 240, 0.3),
+          inset 0 -${data.width * 0.3}px ${data.width * 0.5}px rgba(255,255,255,0.4)
+        `,
+        filter: 'blur(0.5px)',
       }}
     />
   );
 };
 
-// Screen splatter - water hitting the "screen"
+// Realistic screen splatter with sub-droplets and proper fluid physics
 const ScreenSplatter = ({
   data,
   scrollProgress
@@ -183,12 +316,30 @@ const ScreenSplatter = ({
   data: typeof SCREEN_SPLATTERS[0];
   scrollProgress: number;
 }) => {
-  const adjustedProgress = Math.max(0, scrollProgress - 0.3 - data.delay);
-  const appearProgress = Math.min(1, adjustedProgress * 4);
+  const adjustedProgress = Math.max(0, scrollProgress - 0.25 - data.delay);
+  const impactProgress = Math.min(1, adjustedProgress * 5);
+  const spreadProgress = Math.min(1, adjustedProgress * 3);
   
-  if (appearProgress <= 0) return null;
+  if (impactProgress <= 0) return null;
   
-  const dripProgress = Math.max(0, adjustedProgress - 0.2) * 2;
+  const dripProgress = Math.max(0, adjustedProgress - 0.15) * 1.8;
+  const fadeOut = scrollProgress > 0.7 ? Math.max(0, 1 - (scrollProgress - 0.7) * 3) : 1;
+  
+  // Generate sub-droplet positions
+  const subDroplets = useMemo(() => {
+    const drops = [];
+    for (let i = 0; i < data.subDroplets; i++) {
+      const angle = (data.spreadAngle * (i / data.subDroplets - 0.5)) * (Math.PI / 180);
+      const dist = 15 + ((i * 1.618) % 1) * 35;
+      drops.push({
+        x: Math.cos(angle + Math.PI / 2) * dist,
+        y: Math.sin(angle + Math.PI / 2) * dist + dist * 0.3,
+        size: 4 + ((i * 2.718) % 1) * 8,
+        delay: i * 0.02,
+      });
+    }
+    return drops;
+  }, [data.subDroplets, data.spreadAngle]);
   
   return (
     <div
@@ -197,51 +348,136 @@ const ScreenSplatter = ({
         left: `calc(50% + ${data.x}%)`,
         top: `calc(50% + ${data.y}%)`,
         transform: 'translate(-50%, -50%)',
+        opacity: fadeOut,
       }}
     >
-      {/* Main splatter blob */}
+      {/* Main splatter blob with realistic refraction */}
       <div
         style={{
-          width: data.size * appearProgress,
-          height: data.size * appearProgress * 0.8,
+          width: data.size * impactProgress,
+          height: data.size * impactProgress * 0.75,
           background: `
-            radial-gradient(ellipse at 40% 30%,
-              rgba(255, 255, 255, 0.4) 0%,
-              rgba(180, 220, 250, 0.3) 30%,
-              rgba(100, 180, 230, 0.2) 60%,
-              rgba(60, 150, 200, 0.1) 100%
+            radial-gradient(ellipse at 35% 25%,
+              rgba(255, 255, 255, 0.5) 0%,
+              rgba(230, 245, 255, 0.4) 15%,
+              rgba(180, 225, 250, 0.3) 35%,
+              rgba(120, 195, 240, 0.2) 55%,
+              rgba(80, 165, 220, 0.1) 75%,
+              transparent 100%
             )
           `,
-          borderRadius: '60% 40% 50% 50% / 50% 50% 40% 60%',
+          borderRadius: '55% 45% 48% 52% / 45% 52% 48% 55%',
           boxShadow: `
-            inset 0 0 ${data.size * 0.2}px rgba(255,255,255,0.3),
-            0 0 ${data.size * 0.1}px rgba(100, 180, 230, 0.3)
+            inset 0 0 ${data.size * 0.15}px rgba(255,255,255,0.4),
+            inset -${data.size * 0.05}px -${data.size * 0.03}px ${data.size * 0.1}px rgba(100, 180, 230, 0.2),
+            0 0 ${data.size * 0.08}px rgba(100, 190, 240, 0.25)
           `,
-          opacity: Math.max(0, 1 - adjustedProgress * 0.8),
+          opacity: Math.max(0, 1 - adjustedProgress * 0.7),
+          transform: `scale(${1 + spreadProgress * 0.2})`,
         }}
-      />
-      {/* Drip running down */}
+      >
+        {/* Inner highlight for refraction effect */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '15%',
+            left: '20%',
+            width: '30%',
+            height: '20%',
+            background: 'radial-gradient(ellipse, rgba(255,255,255,0.7) 0%, transparent 70%)',
+            borderRadius: '50%',
+            filter: 'blur(2px)',
+          }}
+        />
+      </div>
+      
+      {/* Sub-droplets from splash */}
+      {subDroplets.map((drop, i) => {
+        const dropProgress = Math.max(0, spreadProgress - drop.delay);
+        if (dropProgress <= 0) return null;
+        return (
+          <div
+            key={i}
+            style={{
+              position: 'absolute',
+              left: drop.x * dropProgress,
+              top: drop.y * dropProgress,
+              width: drop.size,
+              height: drop.size * 1.2,
+              background: `radial-gradient(ellipse at 35% 30%, 
+                rgba(255, 255, 255, 0.85) 0%,
+                rgba(180, 220, 250, 0.6) 40%,
+                rgba(100, 180, 230, 0.3) 100%
+              )`,
+              borderRadius: '45% 55% 50% 50% / 40% 40% 60% 60%',
+              opacity: Math.max(0, 0.8 - dropProgress * 0.6),
+              boxShadow: '0 0 4px rgba(100, 190, 240, 0.3)',
+            }}
+          />
+        );
+      })}
+      
+      {/* Main drip running down with realistic shape */}
       <div
         style={{
           position: 'absolute',
-          top: data.size * 0.6,
-          left: '40%',
-          width: 4 + data.size * 0.05,
+          top: data.size * 0.5 * impactProgress,
+          left: '45%',
+          width: data.dripWidth,
           height: data.dripLength * dripProgress,
           background: `linear-gradient(180deg,
-            rgba(150, 210, 250, 0.3) 0%,
-            rgba(100, 180, 230, 0.4) 50%,
-            rgba(60, 150, 200, 0.2) 100%
+            rgba(200, 235, 255, 0.45) 0%,
+            rgba(150, 215, 250, 0.5) 20%,
+            rgba(100, 185, 240, 0.45) 60%,
+            rgba(70, 160, 220, 0.3) 85%,
+            rgba(50, 140, 200, 0.15) 100%
           )`,
-          borderRadius: '50% 50% 50% 50% / 10% 10% 90% 90%',
-          opacity: Math.max(0, 1 - adjustedProgress * 0.5),
+          borderRadius: '40% 40% 50% 50% / 5% 5% 95% 95%',
+          opacity: Math.max(0, 1 - adjustedProgress * 0.4) * fadeOut,
+          boxShadow: `
+            inset -1px 0 2px rgba(255,255,255,0.3),
+            0 0 3px rgba(100, 180, 230, 0.2)
+          `,
         }}
-      />
+      >
+        {/* Drip highlight */}
+        <div
+          style={{
+            position: 'absolute',
+            left: '20%',
+            top: 0,
+            width: '30%',
+            height: '100%',
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+            borderRadius: 'inherit',
+          }}
+        />
+      </div>
+      
+      {/* Secondary smaller drip */}
+      {dripProgress > 0.3 && (
+        <div
+          style={{
+            position: 'absolute',
+            top: data.size * 0.6 * impactProgress,
+            left: '60%',
+            width: data.dripWidth * 0.6,
+            height: data.dripLength * 0.5 * Math.max(0, dripProgress - 0.3) * 1.4,
+            background: `linear-gradient(180deg,
+              rgba(180, 225, 250, 0.4) 0%,
+              rgba(120, 195, 240, 0.35) 50%,
+              rgba(80, 165, 220, 0.2) 100%
+            )`,
+            borderRadius: '40% 40% 50% 50% / 5% 5% 95% 95%',
+            opacity: Math.max(0, 0.8 - adjustedProgress * 0.4) * fadeOut,
+          }}
+        />
+      )}
     </div>
   );
 };
 
-// Main Water Splash Effect Component - Bucket of water effect
+// Main Water Splash Effect Component - Ultra-realistic bucket of water effect
 const WaterSplash = ({ scrollProgress }: { scrollProgress: number }) => {
   // Global fade out - everything disappears as splash completes
   const globalFadeOut = scrollProgress > 0.7 ? Math.max(0, 1 - (scrollProgress - 0.7) * 3.33) : 1;
@@ -249,24 +485,51 @@ const WaterSplash = ({ scrollProgress }: { scrollProgress: number }) => {
   // Don't render anything if fully faded out
   if (globalFadeOut <= 0) return null;
   
-  // Main water mass that bursts toward viewer
-  const centralScale = scrollProgress < 0.2 
-    ? 1 + scrollProgress * 8 
-    : Math.max(0, 2.6 - (scrollProgress - 0.2) * 4);
+  // Main water mass that bursts toward viewer - more dramatic
+  const centralProgress = Math.min(1, scrollProgress * 3);
+  const centralScale = scrollProgress < 0.15 
+    ? 1 + scrollProgress * 12 
+    : Math.max(0, 2.8 - (scrollProgress - 0.15) * 5);
   
-  const centralOpacity = (scrollProgress < 0.3 
-    ? Math.min(1, scrollProgress * 5) 
-    : Math.max(0, 1 - (scrollProgress - 0.3) * 2)) * globalFadeOut;
+  const centralOpacity = (scrollProgress < 0.25 
+    ? Math.min(1, scrollProgress * 6) 
+    : Math.max(0, 1 - (scrollProgress - 0.25) * 2.5)) * globalFadeOut;
 
   // Water sheet that spreads across screen
-  const sheetProgress = Math.max(0, scrollProgress - 0.15);
-  const sheetScale = sheetProgress * 15;
-  const sheetOpacity = (sheetProgress < 0.3 
-    ? sheetProgress * 2 
-    : Math.max(0, 0.6 - (sheetProgress - 0.3) * 1.5)) * globalFadeOut;
+  const sheetProgress = Math.max(0, scrollProgress - 0.1);
+  const sheetScale = sheetProgress * 18;
+  const sheetOpacity = (sheetProgress < 0.25 
+    ? sheetProgress * 2.5 
+    : Math.max(0, 0.65 - (sheetProgress - 0.25) * 1.8)) * globalFadeOut;
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ opacity: globalFadeOut }}>
+      {/* Caustics light patterns - light refraction through water */}
+      {CAUSTICS.map((caustic, i) => {
+        const causticProgress = Math.max(0, scrollProgress - caustic.delay);
+        if (causticProgress <= 0 || causticProgress > 0.6) return null;
+        return (
+          <div
+            key={`caustic-${i}`}
+            className="absolute rounded-full"
+            style={{
+              left: `${caustic.x}%`,
+              top: `${caustic.y}%`,
+              width: caustic.size * (1 + causticProgress * 0.5),
+              height: caustic.size * (1 + causticProgress * 0.5),
+              background: `radial-gradient(ellipse at ${30 + causticProgress * 20}% ${30 + causticProgress * 20}%, 
+                rgba(255, 255, 255, ${0.3 * caustic.intensity}) 0%,
+                rgba(200, 235, 255, ${0.2 * caustic.intensity}) 30%,
+                transparent 70%
+              )`,
+              filter: 'blur(4px)',
+              opacity: Math.sin(causticProgress * Math.PI / 0.6) * 0.7,
+              transform: `rotate(${causticProgress * 45}deg)`,
+            }}
+          />
+        );
+      })}
+      
       {/* Background water mist/atmosphere */}
       <div
         className="absolute inset-0"
@@ -381,48 +644,120 @@ const WaterSplash = ({ scrollProgress }: { scrollProgress: number }) => {
         <ScreenSplatter key={`splatter-${i}`} data={data} scrollProgress={scrollProgress} />
       ))}
       
-      {/* Screen water drip effect at edges */}
-      {scrollProgress > 0.5 && (
+      {/* Screen water drip effect at edges - more realistic with bulging tips */}
+      {scrollProgress > 0.4 && (
         <>
-          {[...Array(8)].map((_, i) => {
-            const dripProgress = Math.max(0, scrollProgress - 0.5 - i * 0.03);
-            const xPos = 10 + (i * 12);
+          {[...Array(12)].map((_, i) => {
+            const startDelay = 0.4 + i * 0.025;
+            const dripProgress = Math.max(0, scrollProgress - startDelay);
+            const xPos = 5 + (i * 8);
+            const dripWidth = 4 + (i % 4) * 2;
+            const maxHeight = 250 + (i % 3) * 100;
+            const wobble = Math.sin(dripProgress * Math.PI * 2) * 2;
+            
             return (
               <div
                 key={`drip-${i}`}
                 className="absolute pointer-events-none"
                 style={{
-                  left: `${xPos}%`,
+                  left: `calc(${xPos}% + ${wobble}px)`,
                   top: 0,
-                  width: 6 + (i % 3) * 2,
-                  height: dripProgress * 300,
-                  background: `linear-gradient(180deg,
-                    rgba(150, 210, 250, 0.4) 0%,
-                    rgba(100, 180, 230, 0.5) 30%,
-                    rgba(80, 170, 220, 0.3) 70%,
-                    rgba(60, 150, 200, 0.1) 100%
-                  )`,
-                  borderRadius: '0 0 50% 50%',
-                  opacity: Math.max(0, 1 - dripProgress * 0.5),
                 }}
-              />
+              >
+                {/* Main drip body */}
+                <div
+                  style={{
+                    width: dripWidth,
+                    height: Math.min(dripProgress * 400, maxHeight),
+                    background: `linear-gradient(180deg,
+                      rgba(180, 225, 250, 0.35) 0%,
+                      rgba(140, 205, 245, 0.45) 20%,
+                      rgba(100, 180, 230, 0.5) 50%,
+                      rgba(80, 165, 220, 0.4) 80%,
+                      rgba(60, 150, 200, 0.25) 100%
+                    )`,
+                    borderRadius: '40% 40% 50% 50% / 0% 0% 50% 50%',
+                    opacity: Math.max(0, 1 - dripProgress * 0.4),
+                    boxShadow: `
+                      inset -1px 0 2px rgba(255,255,255,0.3),
+                      inset 1px 0 1px rgba(100, 180, 230, 0.2),
+                      0 0 4px rgba(100, 180, 230, 0.2)
+                    `,
+                  }}
+                >
+                  {/* Highlight along drip */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: '15%',
+                      top: 0,
+                      width: '25%',
+                      height: '100%',
+                      background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)',
+                      borderRadius: 'inherit',
+                    }}
+                  />
+                </div>
+                
+                {/* Bulging droplet at tip */}
+                {dripProgress > 0.1 && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: Math.min(dripProgress * 400, maxHeight) - dripWidth * 1.2,
+                      left: -dripWidth * 0.4,
+                      width: dripWidth * 1.8,
+                      height: dripWidth * 2.2,
+                      background: `radial-gradient(ellipse at 35% 35%,
+                        rgba(255, 255, 255, 0.6) 0%,
+                        rgba(180, 225, 250, 0.5) 30%,
+                        rgba(100, 180, 230, 0.4) 60%,
+                        rgba(60, 150, 200, 0.2) 100%
+                      )`,
+                      borderRadius: '45% 45% 50% 50% / 40% 40% 60% 60%',
+                      opacity: Math.max(0, 1 - dripProgress * 0.3),
+                      boxShadow: '0 2px 4px rgba(100, 180, 230, 0.3)',
+                    }}
+                  />
+                )}
+              </div>
             );
           })}
         </>
       )}
       
-      {/* Fine mist spray overlay */}
+      {/* Fine mist spray overlay - enhanced with multiple layers */}
       <div
         className="absolute inset-0"
         style={{
-          background: scrollProgress > 0.2 ? `
-            radial-gradient(circle at 30% 40%, rgba(200, 230, 250, ${(scrollProgress - 0.2) * 0.15}) 0%, transparent 30%),
-            radial-gradient(circle at 70% 30%, rgba(180, 220, 250, ${(scrollProgress - 0.2) * 0.12}) 0%, transparent 25%),
-            radial-gradient(circle at 50% 70%, rgba(160, 210, 245, ${(scrollProgress - 0.2) * 0.1}) 0%, transparent 35%)
+          background: scrollProgress > 0.15 ? `
+            radial-gradient(circle at 25% 35%, rgba(220, 240, 255, ${(scrollProgress - 0.15) * 0.18}) 0%, transparent 25%),
+            radial-gradient(circle at 75% 25%, rgba(200, 235, 255, ${(scrollProgress - 0.15) * 0.15}) 0%, transparent 20%),
+            radial-gradient(circle at 50% 65%, rgba(180, 225, 250, ${(scrollProgress - 0.15) * 0.12}) 0%, transparent 30%),
+            radial-gradient(circle at 15% 70%, rgba(160, 215, 245, ${(scrollProgress - 0.15) * 0.1}) 0%, transparent 22%),
+            radial-gradient(circle at 85% 60%, rgba(170, 220, 248, ${(scrollProgress - 0.15) * 0.1}) 0%, transparent 18%)
           ` : 'none',
-          opacity: Math.max(0, 1 - (scrollProgress - 0.6) * 2),
+          opacity: Math.max(0, 1 - (scrollProgress - 0.55) * 2.2),
         }}
       />
+      
+      {/* Subtle screen wetness effect - appears after main splash */}
+      {scrollProgress > 0.35 && (
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `
+              linear-gradient(180deg, 
+                rgba(200, 235, 255, ${Math.min(0.08, (scrollProgress - 0.35) * 0.2)}) 0%,
+                transparent 30%,
+                rgba(180, 225, 250, ${Math.min(0.05, (scrollProgress - 0.35) * 0.15)}) 70%,
+                rgba(160, 215, 245, ${Math.min(0.1, (scrollProgress - 0.35) * 0.25)}) 100%
+              )
+            `,
+            opacity: Math.max(0, 1 - (scrollProgress - 0.7) * 3),
+          }}
+        />
+      )}
     </div>
   );
 };

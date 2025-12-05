@@ -50,8 +50,8 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$AquaBud
 ;
 ;
 const metadata = {
-    title: "Cunningham Pure Water LLC | Louisiana's Only Authorized Wellsys Dealer",
-    description: "Premium commercial water coolers and ice machines with 5-6 stage reverse osmosis filtration. Louisiana's exclusive authorized Wellsys dealer. Rent water coolers and ice machines for your business.",
+    title: "Cunningham Pure Water LLC | Louisiana's Authorized Wellsys Dealer",
+    description: "Premium commercial office water coolers and ice machines with 5 & 6 stage reverse osmosis filtration. Louisiana's exclusive authorized Wellsys dealer. Rent reverse osmosis water coolers and ice machines for your business.",
     keywords: "water cooler rental, ice machine rental, Wellsys dealer Louisiana, commercial water cooler, reverse osmosis, office water cooler, pure water, water filtration",
     authors: [
         {
@@ -60,7 +60,7 @@ const metadata = {
     ],
     openGraph: {
         title: "Cunningham Pure Water LLC | Premium Water Solutions",
-        description: "Louisiana's only authorized Wellsys dealer. Commercial water coolers and ice machines with advanced filtration for businesses.",
+        description: "Louisiana's authorized Wellsys dealer. Commercial water coolers and ice machines with advanced reverse osmosis filtration for businesses.",
         url: "https://www.officepurewater.com",
         siteName: "Cunningham Pure Water LLC",
         locale: "en_US",
@@ -69,7 +69,7 @@ const metadata = {
     twitter: {
         card: "summary_large_image",
         title: "Cunningham Pure Water LLC",
-        description: "Premium commercial water coolers and ice machines for Louisiana businesses."
+        description: "Premium commercial reverse osmosis water coolers and ice machines for Louisiana businesses."
     },
     robots: {
         index: true,
