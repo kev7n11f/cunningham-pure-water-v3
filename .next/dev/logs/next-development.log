@@ -1,6 +1,0 @@
-[00:00:02.051] Server  LOG      ✓ Ready in 1068ms
-[02:12:47.108] Browser WARN    Please ensure that the container has a non-static position, like 'relative', 'fixed', or 'absolute' to ensure scroll offset is calculated correctly.
-[02:12:51.356] Browser WARN    Image with src "/ice-machine-1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[02:12:51.539] Browser WARN    Image with src "/countertop-2.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[02:12:51.733] Browser WARN    Image with src "/water-cooler-4.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[02:14:20.872] Server  LOG      ✓ Compiled in 142ms
