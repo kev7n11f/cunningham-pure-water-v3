@@ -427,3 +427,13 @@ input::placeholder, textarea::placeholder { color: rgba(255, 255, 255, 0.4); }
 .aquabuddy-wobble { animation: waterWobble 3s ease-in-out infinite; }
 .aquabuddy-sparkle { animation: sparkle 2s ease-in-out infinite; }
 .aquabuddy-wave { animation: wave-hand 1.5s ease-in-out infinite; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 2s ease-out forwards;
+}
+

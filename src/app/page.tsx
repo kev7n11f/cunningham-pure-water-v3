@@ -857,7 +857,7 @@ export default function Home() {
 
       {/* About Section */}
       <section id="about" className="min-h-screen py-24 md:py-32 relative flex items-center justify-center border-t border-[#4A9ED0]/20">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1A3A5F] via-[#0E2240] to-[#0A1628]" />
+        <VideoBackground src="https://player.vimeo.com/video/761207400?h=95298ad517" opacity={0.15} />
         
         <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
           <AnimatedSection className="text-center mb-24">
@@ -1011,7 +1011,7 @@ export default function Home() {
 
       {/* Why Us Section */}
       <section id="why-us" className="min-h-screen py-24 md:py-32 relative flex items-center justify-center overflow-hidden border-t border-[#4A9ED0]/20">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1A3A5F] via-[#0E2240] to-[#0A1628]" />
+        <VideoBackground src="https://player.vimeo.com/video/1021104216?h=004efc2eb3" opacity={0.12} />
         
         <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
           <AnimatedSection className="text-center mb-20">
@@ -1064,7 +1064,7 @@ export default function Home() {
 
       {/* Contact Section */}
       <section id="contact" className="min-h-screen py-24 md:py-32 relative flex items-center justify-center border-t border-[#4A9ED0]/20">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0A1628] to-[#0E2240]" />
+        <VideoBackground src="https://player.vimeo.com/video/1022298850?h=a658ee9673" opacity={0.1} />
         
         <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
