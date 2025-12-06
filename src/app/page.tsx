@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import Image from 'next/image';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
-import { Droplets, Snowflake, Shield, Leaf, Phone, Mail, MapPin, ChevronDown, Check, Award, Zap } from 'lucide-react';
+import { Droplets, Snowflake, Shield, Leaf, Phone, Mail, MapPin, ChevronDown, Check, Award, Zap, Menu, X } from 'lucide-react';
 
 // Generate realistic splash droplets with physics-based properties
 const generateSplashDroplets = (count: number) => {
@@ -112,9 +112,18 @@ const generateCaustics = (count: number) => {
   return caustics;
 };
 
-const SPLASH_DROPLETS = generateSplashDroplets(120);
-const WATER_STREAMS = generateWaterStreams(32);
-const SCREEN_SPLATTERS = generateSplatters(18);
+// Detect mobile devices and reduce animation complexity
+const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Reduce animations on mobile and for users who prefer reduced motion
+const dropletCount = prefersReducedMotion ? 20 : isMobile ? 40 : 120;
+const streamCount = prefersReducedMotion ? 8 : isMobile ? 12 : 32;
+const splatterCount = prefersReducedMotion ? 4 : isMobile ? 8 : 18;
+
+const SPLASH_DROPLETS = generateSplashDroplets(dropletCount);
+const WATER_STREAMS = generateWaterStreams(streamCount);
+const SCREEN_SPLATTERS = generateSplatters(splatterCount);
 const CAUSTICS = generateCaustics(12);
 
 // Realistic water droplet with refraction and highlights
@@ -340,8 +349,10 @@ const ScreenSplatter = ({
   }, [data.subDroplets, data.spreadAngle]);
   
   if (impactProgress <= 0) return null;
-  
+
   return (
+    <div
+      className="absolute"
       style={{
         left: `calc(50% + ${data.x}%)`,
         top: `calc(50% + ${data.y}%)`,
@@ -389,9 +400,9 @@ const ScreenSplatter = ({
             }}
           />
         </div>
-        
-        {/* Sub-droplets from splash */}}
-      {subDroplets.map((drop, i) => {
+
+        {/* Sub-droplets from splash */}
+        {subDroplets.map((drop, i) => {
         const dropProgress = Math.max(0, spreadProgress - drop.delay);
         if (dropProgress <= 0) return null;
         return (
@@ -472,6 +483,7 @@ const ScreenSplatter = ({
           }}
         />
       )}
+      </div>
     </div>
   );
 };
@@ -763,15 +775,18 @@ const WaterSplash = ({ scrollProgress }: { scrollProgress: number }) => {
 
 // Floating Water Droplets Background
 const FloatingDroplets = () => {
-  const dropletData = useMemo(() => 
-    Array.from({ length: 15 }, (_, i) => ({
+  const isMobileView = typeof window !== 'undefined' && window.innerWidth < 768;
+  const count = isMobileView ? 8 : 15; // Reduce droplets on mobile
+
+  const dropletData = useMemo(() =>
+    Array.from({ length: count }, (_, i) => ({
       id: i,
       left: `${(i * 6.7) % 100}%`,
       delay: (i * 0.4) % 5,
       duration: 10 + (i % 5) * 2,
       size: 4 + (i % 4) * 3,
       xDrift: ((i * 17) % 80) - 40,
-    })), []
+    })), [count]
   );
 
   return (
@@ -1048,67 +1063,85 @@ export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
   const [splashComplete, setSplashComplete] = useState(false);
   const [splashProgress, setSplashProgress] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const accumulatedScroll = useRef(0);
-  const splashDuration = 2500; // Total scroll pixels needed to complete splash (slower animation)
+
+  // Detect mobile and auto-complete splash animation faster
+  const isMobileDevice = typeof window !== 'undefined' && window.innerWidth < 768;
+  const splashDuration = isMobileDevice ? 800 : 2500; // Faster on mobile
   
   // Lock scrolling and capture scroll events during splash animation
   useEffect(() => {
     if (splashComplete) return;
-    
-    const handleWheel = (e: WheelEvent) => {
-      if (splashComplete) return;
-      
-      e.preventDefault();
-      
-      // Accumulate scroll delta
-      accumulatedScroll.current += Math.abs(e.deltaY);
-      
-      // Calculate progress (0 to 1)
+
+    let rafId: number | null = null;
+    let pendingUpdate = false;
+
+    const updateProgress = () => {
       const progress = Math.min(1, accumulatedScroll.current / splashDuration);
       setSplashProgress(progress);
-      
-      // When splash is complete, unlock scrolling
+
       if (progress >= 1) {
         setSplashComplete(true);
       }
+      pendingUpdate = false;
     };
-    
+
+    const scheduleUpdate = () => {
+      if (!pendingUpdate) {
+        pendingUpdate = true;
+        rafId = requestAnimationFrame(updateProgress);
+      }
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      if (splashComplete) return;
+
+      e.preventDefault();
+
+      // Accumulate scroll delta
+      accumulatedScroll.current += Math.abs(e.deltaY);
+
+      // Schedule update using requestAnimationFrame for better performance
+      scheduleUpdate();
+    };
+
     // Prevent default scrolling during splash
     window.addEventListener('wheel', handleWheel, { passive: false });
-    
+
     // Also handle touch scrolling
     let touchStartY = 0;
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY = e.touches[0].clientY;
     };
-    
+
     const handleTouchMove = (e: TouchEvent) => {
       if (splashComplete) return;
-      
+
       e.preventDefault();
-      
+
       const touchY = e.touches[0].clientY;
       const deltaY = touchStartY - touchY;
       touchStartY = touchY;
-      
+
       accumulatedScroll.current += Math.abs(deltaY);
-      const progress = Math.min(1, accumulatedScroll.current / splashDuration);
-      setSplashProgress(progress);
-      
-      if (progress >= 1) {
-        setSplashComplete(true);
-      }
+
+      // Schedule update using requestAnimationFrame for better performance
+      scheduleUpdate();
     };
-    
-    window.addEventListener('touchstart', handleTouchStart, { passive: false });
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: false });
-    
+
     return () => {
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
     };
-  }, [splashComplete]);
+  }, [splashComplete, splashDuration]);
   
   // After splash completes, use regular scroll for the rest of the page
   const { scrollYProgress } = useScroll({
@@ -1129,7 +1162,7 @@ export default function Home() {
     <main className="min-h-screen overflow-x-hidden">
       {/* Navigation */}
       <motion.nav
-        className="fixed top-0 left-0 right-0 z-50 px-6 py-4"
+        className="fixed top-0 left-0 right-0 z-50 px-6 py-4 bg-[#0A1628]/80 backdrop-blur-md"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
@@ -1138,24 +1171,103 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <Image src="/logo.png" alt="Cunningham Pure Water, LLC" width={180} height={60} className="h-12 w-auto" priority />
           </div>
+
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             <a href="#about" className="nav-link">About</a>
             <a href="#products" className="nav-link">Products</a>
             <a href="#why-us" className="nav-link">Why Us</a>
-            <button 
+            <button
               onClick={() => {
                 document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
                 setTimeout(() => {
-                  window.dispatchEvent(new CustomEvent('openAquaBuddy', { 
-                    detail: { message: 'I\'d like to get a quote for water solutions for my business.', autoSend: true } 
+                  window.dispatchEvent(new CustomEvent('openAquaBuddy', {
+                    detail: { message: 'I\'d like to get a quote for water solutions for my business.', autoSend: true }
                   }));
                 }, 500);
               }}
               className="btn-primary text-sm py-2 px-6"
             >Get Quote</button>
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 text-white/80 hover:text-white transition-colors"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
         </div>
       </motion.nav>
+
+      {/* Mobile Menu Overlay */}
+      <motion.div
+        initial={{ opacity: 0, x: '100%' }}
+        animate={{
+          opacity: mobileMenuOpen ? 1 : 0,
+          x: mobileMenuOpen ? 0 : '100%'
+        }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        className="fixed inset-0 z-40 md:hidden"
+        style={{ pointerEvents: mobileMenuOpen ? 'auto' : 'none' }}
+      >
+        {/* Backdrop */}
+        <div
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+
+        {/* Menu Panel */}
+        <div className="absolute right-0 top-0 bottom-0 w-3/4 max-w-sm bg-gradient-to-br from-[#0E2240] to-[#0A1628] shadow-2xl">
+          <div className="flex flex-col h-full pt-24 px-6">
+            <nav className="flex flex-col gap-6">
+              <a
+                href="#about"
+                className="text-xl text-white/90 hover:text-white transition-colors py-3 border-b border-white/10"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                About
+              </a>
+              <a
+                href="#products"
+                className="text-xl text-white/90 hover:text-white transition-colors py-3 border-b border-white/10"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Products
+              </a>
+              <a
+                href="#why-us"
+                className="text-xl text-white/90 hover:text-white transition-colors py-3 border-b border-white/10"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Why Us
+              </a>
+              <a
+                href="#contact"
+                className="text-xl text-white/90 hover:text-white transition-colors py-3 border-b border-white/10"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Contact
+              </a>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+                  setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent('openAquaBuddy', {
+                      detail: { message: 'I\'d like to get a quote for water solutions for my business.', autoSend: true }
+                    }));
+                  }, 500);
+                }}
+                className="btn-primary text-base py-3 px-6 mt-4"
+              >
+                Get Quote
+              </button>
+            </nav>
+          </div>
+        </div>
+      </motion.div>
 
       {/* Hero Section - Scroll-Locked Animation */}
       <section ref={heroRef} className="relative h-[200vh]">
@@ -1202,44 +1314,44 @@ export default function Home() {
             </motion.h1>
             
             <motion.p
-              className="text-xl md:text-2xl text-gray-300 mb-12 font-light text-center w-full"
+              className="text-lg md:text-xl lg:text-2xl text-gray-300 mb-8 md:mb-12 font-light text-center w-full px-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.9 }}
             >
-              Premium water solutions for Louisiana businesses. 
+              Premium water solutions for Louisiana businesses.
               No bottles. No hassle. Just pure, refreshing water.
             </motion.p>
-            
+
             <motion.div
-              className="flex flex-col sm:flex-row gap-4 justify-center"
+              className="flex flex-col sm:flex-row gap-4 justify-center px-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 1.1 }}
             >
-              <button 
+              <button
                 onClick={() => {
                   document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
                   setTimeout(() => {
-                    window.dispatchEvent(new CustomEvent('openAquaBuddy', { 
-                      detail: { message: 'I\'m interested in getting started with pure water solutions for my business!', autoSend: true } 
+                    window.dispatchEvent(new CustomEvent('openAquaBuddy', {
+                      detail: { message: 'I\'m interested in getting started with pure water solutions for my business!', autoSend: true }
                     }));
                   }, 500);
                 }}
-                className="btn-primary text-lg"
+                className="btn-primary text-base md:text-lg min-h-[48px] px-8"
               >
                 Get Started
               </button>
-              <button 
+              <button
                 onClick={() => {
                   document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
                   setTimeout(() => {
-                    window.dispatchEvent(new CustomEvent('openAquaBuddy', { 
-                      detail: { message: 'Tell me about the Wellsys water coolers, ice machines, and other products you offer.', autoSend: true } 
+                    window.dispatchEvent(new CustomEvent('openAquaBuddy', {
+                      detail: { message: 'Tell me about the Wellsys water coolers, ice machines, and other products you offer.', autoSend: true }
                     }));
                   }, 500);
                 }}
-                className="btn-secondary text-lg"
+                className="btn-secondary text-base md:text-lg min-h-[48px] px-8"
               >
                 View Products
               </button>
@@ -1248,18 +1360,27 @@ export default function Home() {
           
           {/* Scroll Indicator - Fades out as user scrolls */}
           {splashProgress < 0.05 && !splashComplete && (
-            <motion.div 
-              className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+            <motion.div
+              className="absolute bottom-10 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
               initial={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              animate={{ opacity: [1, 0.7, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
             >
-              <span className="text-gray-400 text-sm tracking-wider">Scroll to explore</span>
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
-                <ChevronDown className="w-6 h-6 text-[#4A9ED0]" />
-              </motion.div>
+              <div className="flex flex-col items-center gap-2 bg-[#0A1628]/80 backdrop-blur-sm px-6 py-4 rounded-2xl border border-[#4A9ED0]/30">
+                <span className="text-white md:text-gray-400 text-base md:text-sm font-medium md:font-normal tracking-wider">
+                  <span className="md:hidden">Swipe up to continue</span>
+                  <span className="hidden md:inline">Scroll to explore</span>
+                </span>
+                <motion.div
+                  animate={{ y: [0, 12, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                  className="flex flex-col items-center gap-1"
+                >
+                  <ChevronDown className="w-7 h-7 md:w-6 md:h-6 text-[#4A9ED0]" />
+                  <ChevronDown className="w-7 h-7 md:w-6 md:h-6 text-[#4A9ED0] -mt-4 opacity-50" />
+                </motion.div>
+              </div>
             </motion.div>
           )}
         </div>
