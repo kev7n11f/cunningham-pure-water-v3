@@ -338,8 +338,6 @@ const ScreenSplatter = ({
     }
     return drops;
   }, [data.subDroplets, data.spreadAngle]);
-    return drops;
-  }, [data.subDroplets, data.spreadAngle]);
   
   if (impactProgress <= 0) return null;
   
@@ -351,47 +349,48 @@ const ScreenSplatter = ({
         opacity: fadeOut,
       }}
     >
-      {/* Main splatter blob with realistic refraction */}
-      <div
-        style={{
-          width: data.size * impactProgress,
-          height: data.size * impactProgress * 0.75,
-          background: `
-            radial-gradient(ellipse at 35% 25%,
-              rgba(255, 255, 255, 0.5) 0%,
-              rgba(230, 245, 255, 0.4) 15%,
-              rgba(180, 225, 250, 0.3) 35%,
-              rgba(120, 195, 240, 0.2) 55%,
-              rgba(80, 165, 220, 0.1) 75%,
-              transparent 100%
-            )
-          `,
-          borderRadius: '55% 45% 48% 52% / 45% 52% 48% 55%',
-          boxShadow: `
-            inset 0 0 ${data.size * 0.15}px rgba(255,255,255,0.4),
-            inset -${data.size * 0.05}px -${data.size * 0.03}px ${data.size * 0.1}px rgba(100, 180, 230, 0.2),
-            0 0 ${data.size * 0.08}px rgba(100, 190, 240, 0.25)
-          `,
-          opacity: Math.max(0, 1 - adjustedProgress * 0.7),
-          transform: `scale(${1 + spreadProgress * 0.2})`,
-        }}
-      >
-        {/* Inner highlight for refraction effect */}
+      <div className="absolute pointer-events-none">
+        {/* Main splatter blob with realistic refraction */}
         <div
           style={{
-            position: 'absolute',
-            top: '15%',
-            left: '20%',
-            width: '30%',
-            height: '20%',
-            background: 'radial-gradient(ellipse, rgba(255,255,255,0.7) 0%, transparent 70%)',
-            borderRadius: '50%',
-            filter: 'blur(2px)',
+            width: data.size * impactProgress,
+            height: data.size * impactProgress * 0.75,
+            background: `
+          radial-gradient(ellipse at 35% 25%,
+            rgba(255, 255, 255, 0.5) 0%,
+            rgba(230, 245, 255, 0.4) 15%,
+            rgba(180, 225, 250, 0.3) 35%,
+            rgba(120, 195, 240, 0.2) 55%,
+            rgba(80, 165, 220, 0.1) 75%,
+            transparent 100%
+          )
+            `,
+            borderRadius: '55% 45% 48% 52% / 45% 52% 48% 55%',
+            boxShadow: `
+          inset 0 0 ${data.size * 0.15}px rgba(255,255,255,0.4),
+          inset -${data.size * 0.05}px -${data.size * 0.03}px ${data.size * 0.1}px rgba(100, 180, 230, 0.2),
+          0 0 ${data.size * 0.08}px rgba(100, 190, 240, 0.25)
+            `,
+            opacity: Math.max(0, 1 - adjustedProgress * 0.7),
+            transform: `scale(${1 + spreadProgress * 0.2})`,
           }}
-        />
-      </div>
-      
-      {/* Sub-droplets from splash */}
+        >
+          {/* Inner highlight for refraction effect */}
+          <div
+            style={{
+          position: 'absolute',
+          top: '15%',
+          left: '20%',
+          width: '30%',
+          height: '20%',
+          background: 'radial-gradient(ellipse, rgba(255,255,255,0.7) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(2px)',
+            }}
+          />
+        </div>
+        
+        {/* Sub-droplets from splash */}}
       {subDroplets.map((drop, i) => {
         const dropProgress = Math.max(0, spreadProgress - drop.delay);
         if (dropProgress <= 0) return null;
