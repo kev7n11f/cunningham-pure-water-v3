@@ -467,14 +467,14 @@ export default function AquaBuddy() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 md:inset-auto md:right-4 md:bottom-4 z-50 md:w-[400px] md:h-[600px] flex flex-col"
+            className="fixed inset-0 md:inset-auto md:right-4 md:bottom-4 z-[100] md:w-[400px] md:h-[600px] flex flex-col bg-gradient-to-br from-[#0E2240]/98 to-[#0A1628]/98 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none rounded-none md:rounded-3xl"
             initial={{ opacity: 0, y: '100%' }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: '100%' }}
             transition={{ type: 'spring', stiffness: 200, damping: 20 }}
           >
             {/* Chat container with transparent effect */}
-            <div className="flex-1 flex flex-col rounded-3xl overflow-hidden">
+            <div className="flex-1 flex flex-col overflow-hidden">
               {/* Header */}
               <div className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-3">

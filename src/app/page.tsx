@@ -1065,7 +1065,10 @@ export default function Home() {
   const [splashProgress, setSplashProgress] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const accumulatedScroll = useRef(0);
-  const splashDuration = 2500; // Total scroll pixels needed to complete splash (slower animation)
+
+  // Detect mobile and auto-complete splash animation faster
+  const isMobileDevice = typeof window !== 'undefined' && window.innerWidth < 768;
+  const splashDuration = isMobileDevice ? 800 : 2500; // Faster on mobile
   
   // Lock scrolling and capture scroll events during splash animation
   useEffect(() => {
@@ -1357,18 +1360,27 @@ export default function Home() {
           
           {/* Scroll Indicator - Fades out as user scrolls */}
           {splashProgress < 0.05 && !splashComplete && (
-            <motion.div 
-              className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+            <motion.div
+              className="absolute bottom-10 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
               initial={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              animate={{ opacity: [1, 0.7, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
             >
-              <span className="text-gray-400 text-sm tracking-wider">Scroll to explore</span>
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
-                <ChevronDown className="w-6 h-6 text-[#4A9ED0]" />
-              </motion.div>
+              <div className="flex flex-col items-center gap-2 bg-[#0A1628]/80 backdrop-blur-sm px-6 py-4 rounded-2xl border border-[#4A9ED0]/30">
+                <span className="text-white md:text-gray-400 text-base md:text-sm font-medium md:font-normal tracking-wider">
+                  <span className="md:hidden">Swipe up to continue</span>
+                  <span className="hidden md:inline">Scroll to explore</span>
+                </span>
+                <motion.div
+                  animate={{ y: [0, 12, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                  className="flex flex-col items-center gap-1"
+                >
+                  <ChevronDown className="w-7 h-7 md:w-6 md:h-6 text-[#4A9ED0]" />
+                  <ChevronDown className="w-7 h-7 md:w-6 md:h-6 text-[#4A9ED0] -mt-4 opacity-50" />
+                </motion.div>
+              </div>
             </motion.div>
           )}
         </div>
