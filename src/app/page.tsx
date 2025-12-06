@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useMemo } from 'react';
 import Image from 'next/image';
-import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
+import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import { Droplets, Snowflake, Shield, Leaf, Phone, Mail, MapPin, ChevronDown, Check, Award, Zap } from 'lucide-react';
 
 // Generate realistic splash droplets with physics-based properties
@@ -320,8 +320,6 @@ const ScreenSplatter = ({
   const impactProgress = Math.min(1, adjustedProgress * 5);
   const spreadProgress = Math.min(1, adjustedProgress * 3);
   
-  if (impactProgress <= 0) return null;
-  
   const dripProgress = Math.max(0, adjustedProgress - 0.15) * 1.8;
   const fadeOut = scrollProgress > 0.7 ? Math.max(0, 1 - (scrollProgress - 0.7) * 3) : 1;
   
@@ -340,10 +338,12 @@ const ScreenSplatter = ({
     }
     return drops;
   }, [data.subDroplets, data.spreadAngle]);
+    return drops;
+  }, [data.subDroplets, data.spreadAngle]);
+  
+  if (impactProgress <= 0) return null;
   
   return (
-    <div
-      className="absolute pointer-events-none"
       style={{
         left: `calc(50% + ${data.x}%)`,
         top: `calc(50% + ${data.y}%)`,
