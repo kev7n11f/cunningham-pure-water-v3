@@ -444,19 +444,19 @@ export default function AquaBuddy() {
     <>
       {/* Floating AquaBuddy Character */}
       <motion.div
-        className="fixed z-50"
+        className="fixed z-50 right-4 bottom-4 md:right-5 md:bottom-5"
         initial={{ x: 100, opacity: 0 }}
-        animate={{ 
-          x: 0, 
+        animate={{
+          x: 0,
           opacity: 1,
-          right: isOpen ? '420px' : '20px',
-          bottom: isOpen ? '20px' : '20px',
         }}
         transition={{ type: 'spring', stiffness: 100, damping: 15 }}
-        style={{ right: 20, bottom: 20 }}
+        style={{
+          display: isOpen ? 'none' : 'block' // Hide character when chat is open on mobile
+        }}
       >
-        <AquaBuddyCharacter 
-          isOpen={isOpen} 
+        <AquaBuddyCharacter
+          isOpen={isOpen}
           isTalking={isLoading}
           onClick={() => setIsOpen(!isOpen)}
           mood={isLoading ? 'thinking' : 'happy'}
@@ -467,10 +467,10 @@ export default function AquaBuddy() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed right-4 bottom-4 z-50 w-[400px] h-[600px] flex flex-col"
-            initial={{ opacity: 0, scale: 0.8, y: 50 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 50 }}
+            className="fixed inset-0 md:inset-auto md:right-4 md:bottom-4 z-50 md:w-[400px] md:h-[600px] flex flex-col"
+            initial={{ opacity: 0, y: '100%' }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: '100%' }}
             transition={{ type: 'spring', stiffness: 200, damping: 20 }}
           >
             {/* Chat container with transparent effect */}
@@ -488,10 +488,10 @@ export default function AquaBuddy() {
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                  className="min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
                   aria-label="Close chat"
                 >
-                  <X className="w-4 h-4 text-white" />
+                  <X className="w-5 h-5 text-white" />
                 </button>
               </div>
 
@@ -512,7 +512,7 @@ export default function AquaBuddy() {
                     {quickQuestions.map((question, index) => (
                       <motion.button
                         key={index}
-                        className="text-xs text-white px-3 py-1.5 rounded-full transition-colors hover:text-[#4A9ED0]"
+                        className="text-xs md:text-xs text-white px-4 py-2.5 md:py-2 rounded-full transition-colors hover:text-[#4A9ED0] bg-white/5 hover:bg-white/10"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => {
@@ -528,7 +528,7 @@ export default function AquaBuddy() {
               )}
 
               {/* Input */}
-              <div className="p-4">
+              <div className="p-4 pb-6 md:pb-4">
                 <div className="flex gap-2">
                   <input
                     ref={inputRef}
@@ -537,12 +537,12 @@ export default function AquaBuddy() {
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder="Ask about pure water..."
-                    className="flex-1 rounded-full px-4 py-3 text-white text-sm placeholder:text-gray-400 focus:outline-none transition-colors bg-transparent"
+                    className="flex-1 rounded-full px-4 py-3 md:py-3 min-h-[44px] text-white text-sm md:text-sm placeholder:text-gray-400 focus:outline-none transition-colors bg-transparent"
                   />
                   <motion.button
                     onClick={sendMessage}
                     disabled={!input.trim() || isLoading}
-                    className="w-12 h-12 rounded-full bg-gradient-to-r from-[#4A9ED0] to-[#1A6EA0] flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="min-w-[48px] min-h-[48px] rounded-full bg-gradient-to-r from-[#4A9ED0] to-[#1A6EA0] flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
