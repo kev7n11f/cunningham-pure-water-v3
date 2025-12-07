@@ -279,7 +279,7 @@ const ChatBubble = ({ message, isUser }: { message: Message; isUser: boolean }) 
   <motion.div
     initial={{ opacity: 0, y: 20, scale: 0.9 }}
     animate={{ opacity: 1, y: 0, scale: 1 }}
-    className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}
+    className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 ${!isUser ? 'ml-2' : ''}`}
   >
     <div
       className={`max-w-[85%] p-4 ${
