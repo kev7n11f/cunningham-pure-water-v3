@@ -300,7 +300,7 @@ const TypingIndicator = () => (
     animate={{ opacity: 1 }}
     className="flex justify-start mb-4 ml-3"
   >
-    <div className="px-4 py-3 bg-white/5 rounded-2xl rounded-bl-md">
+    <div className="px-4 py-3 bg-white/5 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-md">
       <div className="flex gap-1">
         {[0, 1, 2].map((i) => (
           <motion.div
