@@ -279,13 +279,13 @@ const ChatBubble = ({ message, isUser }: { message: Message; isUser: boolean }) 
   <motion.div
     initial={{ opacity: 0, y: 20, scale: 0.9 }}
     animate={{ opacity: 1, y: 0, scale: 1 }}
-    className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 ${!isUser ? 'ml-2' : ''}`}
+    className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 ${!isUser ? 'ml-3' : 'mr-3'}`}
   >
     <div
-      className={`max-w-[85%] p-4 ${
+      className={`max-w-[85%] px-4 py-3 rounded-2xl ${
         isUser
-          ? 'text-[#4A9ED0]'
-          : 'text-white'
+          ? 'bg-white/10 text-[#4A9ED0] rounded-br-md'
+          : 'bg-white/5 text-white rounded-bl-md'
       }`}
     >
       <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
@@ -298,9 +298,9 @@ const TypingIndicator = () => (
   <motion.div
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
-    className="flex justify-start mb-4"
+    className="flex justify-start mb-4 ml-3"
   >
-    <div className="px-4 py-3">
+    <div className="px-4 py-3 bg-white/5 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-md">
       <div className="flex gap-1">
         {[0, 1, 2].map((i) => (
           <motion.div
@@ -496,7 +496,7 @@ export default function AquaBuddy() {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-2">
+              <div className="flex-1 overflow-y-auto px-2 py-4 md:px-4 space-y-2">
                 {messages.map((message, index) => (
                   <ChatBubble key={index} message={message} isUser={message.role === 'user'} />
                 ))}
@@ -506,13 +506,13 @@ export default function AquaBuddy() {
 
               {/* Quick Questions */}
               {messages.length <= 1 && (
-                <div className="px-4 pb-2">
-                  <p className="text-xs text-gray-400 mb-2">Quick questions:</p>
+                <div className="px-4 pb-3">
+                  <p className="text-xs text-gray-400 mb-3">Quick questions:</p>
                   <div className="flex flex-wrap gap-2">
                     {quickQuestions.map((question, index) => (
                       <motion.button
                         key={index}
-                        className="text-xs md:text-xs text-white px-4 py-2.5 md:py-2 rounded-full transition-colors hover:text-[#4A9ED0] bg-white/5 hover:bg-white/10"
+                        className="text-xs text-white px-4 py-2.5 rounded-full transition-colors hover:text-[#4A9ED0] bg-white/10 hover:bg-white/15 border border-white/20"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => {
@@ -529,7 +529,7 @@ export default function AquaBuddy() {
 
               {/* Input */}
               <div className="p-4 pb-6 md:pb-4">
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                   <input
                     ref={inputRef}
                     type="text"
@@ -537,12 +537,12 @@ export default function AquaBuddy() {
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder="Ask about pure water..."
-                    className="flex-1 rounded-full px-4 py-3 md:py-3 min-h-[44px] text-white text-sm md:text-sm placeholder:text-gray-400 focus:outline-none transition-colors bg-transparent"
+                    className="flex-1 rounded-full px-4 py-3 min-h-[44px] text-white text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4A9ED0]/50 transition-all bg-white/10 border border-white/20"
                   />
                   <motion.button
                     onClick={sendMessage}
                     disabled={!input.trim() || isLoading}
-                    className="min-w-[48px] min-h-[48px] rounded-full bg-gradient-to-r from-[#4A9ED0] to-[#1A6EA0] flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="min-w-[48px] min-h-[48px] rounded-full bg-gradient-to-r from-[#4A9ED0] to-[#1A6EA0] flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
