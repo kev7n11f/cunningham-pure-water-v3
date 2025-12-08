@@ -167,41 +167,19 @@ const WaterDroplet = ({
   return (
     <>
       <div
-        className="absolute pointer-events-none"
+        className="absolute pointer-events-none water-droplet"
         style={{
-          width: data.size * deformation,
-          height: data.size * data.elongation / deformation,
-          left: '50%',
-          top: '50%',
-          transform: `translate(${x}px, ${y}px) scale(${perspectiveScale}) rotate(${totalRotation}deg)`,
-          opacity: opacity * 0.92,
-          background: data.category === 'mist' 
-            ? `radial-gradient(ellipse at 35% 25%, 
-                rgba(255, 255, 255, 0.8) 0%,
-                rgba(200, 230, 255, 0.5) 40%,
-                rgba(150, 200, 240, 0.2) 100%
-              )`
-            : `radial-gradient(ellipse at 30% 20%, 
-                rgba(255, 255, 255, 0.98) 0%,
-                rgba(240, 250, 255, 0.95) 8%,
-                rgba(200, 235, 255, 0.9) 20%,
-                rgba(150, 210, 250, 0.85) 35%,
-                rgba(100, 180, 235, 0.75) 50%,
-                rgba(60, 150, 210, 0.6) 65%,
-                rgba(40, 120, 180, 0.4) 80%,
-                rgba(30, 90, 150, 0.2) 100%
-              )`,
-          boxShadow: data.category === 'mist' ? 'none' : `
-            0 0 ${8 + data.size * 0.2}px rgba(100, 190, 240, 0.4),
-            0 0 ${15 + data.size * 0.4}px rgba(60, 150, 210, 0.2),
-            inset -${data.size * 0.12}px -${data.size * 0.08}px ${data.size * 0.25}px rgba(255,255,255,0.7),
-            inset ${data.size * 0.06}px ${data.size * 0.04}px ${data.size * 0.15}px rgba(30, 100, 170, 0.25)
-          `,
-          borderRadius: data.category === 'large' 
-            ? '48% 52% 45% 55% / 50% 45% 55% 50%'
-            : '45% 55% 50% 50% / 45% 50% 50% 55%',
-          filter: data.category === 'mist' ? `blur(${1 + data.zDepth * 2}px)` : `blur(${data.zDepth * 0.8}px)`,
+          ['--droplet-width' as any]: `${data.size * deformation}px`,
+          ['--droplet-height' as any]: `${data.size * data.elongation / deformation}px`,
+          ['--droplet-x' as any]: `${x}px`,
+          ['--droplet-y' as any]: `${y}px`,
+          ['--droplet-scale' as any]: perspectiveScale,
+          ['--droplet-rotation' as any]: `${totalRotation}deg`,
+          ['--droplet-opacity' as any]: opacity * 0.92,
+          ['--droplet-size' as any]: `${data.size}px`,
+          ['--droplet-blur' as any]: data.category === 'mist' ? `${1 + data.zDepth * 2}px` : `${data.zDepth * 0.8}px`,
         }}
+        data-category={data.category}
       >
         {/* Primary highlight - simulates light refraction */}
         {data.category !== 'mist' && (
