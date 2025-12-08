@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import AquaBuddy from "@/components/AquaBuddy";
+import FloatingButton from "@/components/FloatingButton";
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -44,6 +45,7 @@ export default function RootLayout({
       <body className="antialiased">
         {children}
         <AquaBuddy />
+        <FloatingButton />
       </body>
     </html>
   );
