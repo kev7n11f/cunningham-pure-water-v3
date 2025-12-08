@@ -298,7 +298,7 @@ const TypingIndicator = () => (
   <motion.div
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
-    className="flex justify-start mb-4"
+    className="flex justify-start mb-4 ml-2"
   >
     <div className="px-4 py-3">
       <div className="flex gap-1">
