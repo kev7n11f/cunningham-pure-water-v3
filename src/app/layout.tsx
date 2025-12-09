@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import AquaBuddy from "@/components/AquaBuddy";
 import FloatingButton from "@/components/FloatingButton";
 
@@ -46,6 +47,7 @@ export default function RootLayout({
         {children}
         <AquaBuddy />
         <FloatingButton />
+        <Analytics />
       </body>
     </html>
   );
