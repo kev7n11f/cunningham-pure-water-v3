@@ -403,6 +403,29 @@ export default function AquaBuddy() {
     setInput('');
     setIsLoading(true);
 
+    // Check if message contains an email address and capture as lead
+    const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
+    const emailMatch = input.trim().match(emailRegex);
+    
+    if (emailMatch) {
+      try {
+        // Send lead notification email in the background
+        fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: 'AquaBuddy Chat Lead',
+            email: emailMatch[0],
+            phone: '',
+            message: `Conversation:\n\n${messages.map(m => `${m.role === 'user' ? 'User' : 'AquaBuddy'}: ${m.content}`).join('\n\n')}\n\nUser: ${input.trim()}`,
+            source: 'AquaBuddy Chat'
+          }),
+        }).catch(err => console.error('Failed to send lead email:', err));
+      } catch (err) {
+        console.error('Failed to capture lead:', err);
+      }
+    }
+
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',

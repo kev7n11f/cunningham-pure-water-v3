@@ -904,43 +904,24 @@ const ContactForm = () => {
     setIsSubmitting(true);
     
     try {
-      // Send the form data to the chatbot API which will email it to admin@cpwsales.com
-      const emailContent = `
-New Contact Form Submission:
-
-Name: ${formData.name}
-Email: ${formData.email}
-Phone: ${formData.phone || 'Not provided'}
-Company: ${formData.company || 'Not provided'}
-
-Message:
-${formData.message}
-
----
-Please follow up with this lead within 24 hours.
-      `.trim();
-
-      // Send to the chat API to process and email
-      await fetch('/api/chat', {
+      // Send the form data via email API
+      const response = await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [{ 
-            role: 'user', 
-            content: `SYSTEM: Email the following contact form submission to admin@cpwsales.com:\n\n${emailContent}` 
-          }],
-          formSubmission: {
-            to: 'admin@cpwsales.com',
-            subject: `New Contact Form Submission from ${formData.name}`,
-            data: formData,
-          }
+          ...formData,
+          source: 'Contact Form'
         }),
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to send email');
+      }
       
-      console.log('Form submitted to admin@cpwsales.com:', formData);
       setSubmitted(true);
     } catch (error) {
       console.error('Form submission error:', error);
+      alert('Failed to send message. Please call us at (318) 727-PURE.');
     } finally {
       setIsSubmitting(false);
     }
