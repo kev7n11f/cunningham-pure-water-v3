@@ -490,7 +490,7 @@ export default function AquaBuddy() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 md:inset-auto md:right-4 md:bottom-4 z-[100] md:w-[400px] md:h-[600px] flex flex-col bg-gradient-to-br from-[#0E2240]/98 to-[#0A1628]/98 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none rounded-none md:rounded-3xl"
+            className="fixed inset-4 md:inset-auto md:right-4 md:bottom-4 z-[100] md:w-[400px] md:h-[600px] flex flex-col bg-gradient-to-br from-[#0E2240]/98 to-[#0A1628]/98 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none rounded-none md:rounded-3xl"
             initial={{ opacity: 0, y: '100%' }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: '100%' }}
