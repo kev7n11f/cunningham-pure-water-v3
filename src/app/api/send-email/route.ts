@@ -1,15 +1,26 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 import { NextRequest, NextResponse } from 'next/server';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_SERVER,
+  port: parseInt(process.env.EMAIL_PORT || '587'),
+  secure: process.env.TLS_ENABLED === 'true' && process.env.EMAIL_PORT === '465',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+  tls: {
+    rejectUnauthorized: false,
+  },
+});
 
 export async function POST(request: NextRequest) {
   try {
     const { name, email, phone, company, message, source } = await request.json();
 
-    const { data, error } = await resend.emails.send({
-      from: 'Cunningham Pure Water <onboarding@resend.dev>', // Change this after domain verification
-      to: ['admin@cpwsales.com'],
+    const mailOptions = {
+      from: `${process.env.FROM_NAME} <${process.env.FROM_EMAIL}>`,
+      to: process.env.QUOTE_NOTIFICATION_EMAIL || 'admin@cpwsales.com',
       replyTo: email,
       subject: `New ${source} Lead: ${name}`,
       html: `
@@ -29,14 +40,11 @@ export async function POST(request: NextRequest) {
           <p style="color: #666; font-size: 14px;">Please follow up with this lead within 24 hours.</p>
         </div>
       `,
-    });
+    };
 
-    if (error) {
-      console.error('Resend error:', error);
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
+    const info = await transporter.sendMail(mailOptions);
 
-    return NextResponse.json({ success: true, data });
+    return NextResponse.json({ success: true, messageId: info.messageId });
   } catch (error) {
     console.error('Email API error:', error);
     return NextResponse.json(
